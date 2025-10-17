@@ -34,9 +34,9 @@ __Elementos__:
 - Lentes de Ajolotes - 1
 
 ##### Retos de Físico a Digital
--
--
--
+- En el juego físico los jugadores se deben cubrir lo ojos para evitar saber los valores de los ajolotes, así que debemos cambiar ello para la versión digital
+- Barajear las cartas
+- Implemetar la dinámica de "La Tiendita"
 
 ![Axolotl Panic!:](./assets/MUESTRA1.jpeg)
 
