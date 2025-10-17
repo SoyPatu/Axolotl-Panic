@@ -1,0 +1,9 @@
+# Roles
+### Patricio Fuentes Silva 
+
+#### Rol:
+- Organizador del Respositorio de GitHub
+- Mandar las Actividades al Canvas
+- Artista 
+
+![Mi Cara:](./assets/Mi%20Cara.jpeg)
