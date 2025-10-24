@@ -45,3 +45,5 @@ __Elementos__:
 ![Axolotl Panic!:](./assets/MUESTRA3.jpeg)
 
 ![Axolotl Panic!:](./assets/MUESTRA4.jpeg)
+
+__Diagrama de Flujo y Prototipo__: - [Ver aquí](https://www.figma.com/design/6nREQj1ngS8ocOTLdid2RL/AXOLOTL-PANIC---DELUXE-EDITION?node-id=6-2&t=JTKPNaRmTejsvSLY-1)
