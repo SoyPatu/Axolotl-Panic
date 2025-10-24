@@ -1,4 +1,4 @@
-# Axolotl-Panic!: Deluxe
+# Axolotl-Panic!: Deluxe Edition
  - Patricio Fuentes Silva 
  - Celeste Bautista Altamirano
  - Rogelio Angel Hugo Sanchez Camacho
