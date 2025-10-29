@@ -34,3 +34,5 @@
 ![Mi Cara:](./assets/RogelioFoto.jpg)
 
 - Inventario: Configuracion de la colaboracion en git e integracion de informacion del inventario sobre los roles que tomare.
+
+- Creacion del diagrama de flujo sobre AXOLOTL-PANIC en figma y apoyo en la organizacion de los wireframes
