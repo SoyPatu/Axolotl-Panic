@@ -8,7 +8,10 @@
 
 ![Mi Cara:](./assets/Mi%20Cara.jpeg)
 
-- Inventario: Creacion del README y su contenido e integracion de la informacion de inventario.
+### Inventario (Patricio Fuentes)
+- Creacion del README y su contenido e integracion de la informacion de inventario.
+
+- Creación del prototipo y creador del proyecto de Figma
 
 ### Celeste Elisheba Bautista Altamirano
 
