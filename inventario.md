@@ -22,7 +22,8 @@
 
 ![Mi foto:](./assets/Foto_Celeste.jpg)
 
-- Inventario: Reconocer las problematicas de implentar nuestro juego fisico a digital e integracion de la informacion de inventario.
+-Figma: Apoyo con la elaboración del figma, diseño de la interfaz de juego.
+-Inventario: Reconocer las problematicas de implementae nuestro juego físico a digital e integración de la información de inventario.
 
 ### Rogelio Angel Hugo Sanchez Camacho 
 
