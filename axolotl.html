@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Axolotl Panic - Prototipo</title>
+<style>
+  :root{
+    --bg:#E8F6F4;
+    --panel:#FFFFFF;
+    --accent:#7BD389;
+    --accent-2:#F6B8D9;
+    --text:#173a2f;
+    --muted:#6b7b73;
+    --card:#EAF8F4;
+    --shadow: 0 8px 20px rgba(23,58,47,0.08);
+    --glass: rgba(255,255,255,0.6);
+    font-family: Inter, "Segoe UI", Roboto, system-ui, -apple-system, "Helvetica Neue", Arial;
+  }
+
+  * { box-sizing: border-box; }
+  html,body{ height:100%; margin:0; background:linear-gradient(180deg,#E8F6F4 0%, #DDF2EE 100%); color:var(--text); }
+  .app { max-width:1100px; margin:24px auto; padding:28px; background:transparent; min-height:calc(100vh - 48px); }
+
+  header { display:flex; gap:16px; align-items:center; margin-bottom:18px; }
+  .logo { display:flex; gap:12px; align-items:center; }
+  .logo .bubble{ width:56px; height:56px; background:linear-gradient(135deg,var(--accent-2),#FFD6EA); border-radius:12px; display:flex; align-items:center; justify-content:center; box-shadow: var(--shadow); }
+  .logo h1{ margin:0; font-size:20px; }
+  .subtitle{ font-size:12px; color:var(--muted); margin-top:4px; }
+
+  /* Panels */
+  .panel { background:var(--panel); border-radius:14px; padding:18px; box-shadow: var(--shadow); }
+  .center { display:flex; align-items:center; justify-content:center; }
+
+  /* Sections */
+  section { display:none; }
+  section.active { display:block; animation:fadeIn .28s ease both; }
+
+  @keyframes fadeIn { from { opacity:0; transform: translateY(6px);} to { opacity:1; transform: none;} }
+
+  /* Menu */
+  .menu-grid { display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-top:12px; }
+  .big-btn { padding:16px; border-radius:12px; border:none; background:linear-gradient(180deg,var(--accent),#4DA86E); color:white; font-weight:700; font-size:16px; cursor:pointer; box-shadow: 0 6px 14px rgba(77,168,110,0.18); transition: transform .12s ease; }
+  .big-btn:hover{ transform: translateY(-3px); }
+  .ghost { background:transparent; border:2px dashed rgba(23,58,47,0.08); color:var(--text); }
+
+  /* Lobby */
+  .lobby-players { display:flex; gap:12px; margin:12px 0; }
+  .player-card { width:120px; background:var(--card); padding:10px; border-radius:10px; text-align:center; box-shadow: 0 6px 12px rgba(10,10,10,0.03); }
+
+  /* Game area */
+  .game-grid { display:grid; grid-template-columns: 360px 1fr; gap:16px; margin-top:16px; }
+  .left-col { display:flex; flex-direction:column; gap:12px; }
+  .stats { display:flex; gap:8px; align-items:center; justify-content:space-between; padding:10px; border-radius:10px; background:var(--card); }
+  .big { font-size:20px; font-weight:700; }
+  .board { padding:12px; border-radius:12px; background: linear-gradient(180deg,#FFFFFF,#F7FFFA); min-height:320px; display:flex; flex-direction:column; gap:12px; }
+  .tokens { display:flex; gap:8px; flex-wrap:wrap; }
+  .token { width:46px; height:46px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-weight:700; box-shadow: 0 6px 12px rgba(0,0,0,0.06); cursor:pointer; }
+  .token.yellow { background: linear-gradient(180deg,#FFD26A,#FFB84D); }
+  .token.brown { background: linear-gradient(180deg,#B3886A,#8B5A3C); }
+  .token.pink { background: linear-gradient(180deg,#FF8FB7,#FF6A9A); }
+
+  .controls { display:flex; gap:8px; margin-top:8px; }
+  .btn { padding:10px 12px; border-radius:10px; border:none; cursor:pointer; background:var(--accent); color:white; font-weight:700; box-shadow: 0 6px 12px rgba(0,0,0,0.05); }
+  .btn.secondary { background:transparent; color:var(--text); border:1px solid rgba(23,58,47,0.06); box-shadow:none; font-weight:600; }
+  .log { max-height:140px; overflow:auto; padding:10px; border-radius:8px; background:#FAFFFE; border:1px dashed rgba(23,58,47,0.03); font-size:14px; color:var(--muted); }
+
+  /* Shop */
+  .shop-grid { display:flex; gap:8px; }
+  .shop-item { padding:10px; border-radius:10px; background:linear-gradient(180deg,#FFF6F9,#FFF0F6); border:1px solid rgba(0,0,0,0.03); width:120px; text-align:center; }
+  .price { font-weight:800; font-size:16px; }
+
+  /* Scoreboard */
+  .score-list { display:flex; gap:8px; }
+  .score-card { padding:10px; border-radius:10px; background:linear-gradient(180deg,#FFFFFF,#F3FFF7); min-width:140px; text-align:center; }
+  .winner { border:2px solid gold; box-shadow: 0 10px 30px rgba(255,215,0,0.12); }
+
+  footer { margin-top:22px; color:var(--muted); font-size:13px; text-align:center; }
+  .small { font-size:12px; color:var(--muted); }
+  .muted { color:var(--muted); }
+
+  /* Responsive */
+  @media (max-width:900px){
+    .game-grid { grid-template-columns: 1fr; }
+    .left-col { order:2; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo">
+      <div class="bubble">🦎</div>
+      <div>
+        <h1>Axolotl Panic — Prototipo</h1>
+        <div class="subtitle">Prototipo juego mesa → web (HTML/CSS/JS)</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MENU -->
+  <section id="menu" class="panel active">
+    <h2>Menú principal</h2>
+    <div class="menu-grid" style="margin-top:12px">
+      <div class="panel center" style="flex-direction:column; gap:12px;">
+        <button class="big-btn" id="btnPlay">JUGAR</button>
+        <button class="big-btn ghost" id="btnTutorial">TUTORIAL</button>
+      </div>
+      <div class="panel center" style="flex-direction:column; gap:12px;">
+        <button class="big-btn ghost" id="btnCredits">CRÉDITOS</button>
+        <button class="big-btn ghost" id="btnExit">SALIR</button>
+      </div>
+    </div>
+    <p class="small muted" style="margin-top:10px">Versión prototipo — contenido del tutorial y créditos vacío por ahora.</p>
+  </section>
+
+  <!-- TUTORIAL -->
+  <section id="tutorial" class="panel">
+    <h2>Tutorial</h2>
+    <p class="muted">(Sección reservada — vacía por ahora)</p>
+    <div style="margin-top:12px">
+      <button class="btn secondary" data-nav="menu">Volver</button>
+    </div>
+  </section>
+
+  <!-- CREDITS -->
+  <section id="credits" class="panel">
+    <h2>Créditos</h2>
+    <p class="muted">(Sección reservada — vacía por ahora)</p>
+    <div style="margin-top:12px">
+      <button class="btn secondary" data-nav="menu">Volver</button>
+    </div>
+  </section>
+
+  <!-- LOBBY -->
+  <section id="lobby" class="panel">
+    <h2>Sala de espera</h2>
+    <p class="muted">Esperando jugadores — simulando 1 humano + 2 bots</p>
+    <div class="lobby-players" style="margin-top:12px">
+      <div class="player-card">
+        <div style="font-weight:800">Tú</div>
+        <div class="small muted">Jugador humano</div>
+      </div>
+      <div class="player-card">
+        <div style="font-weight:800">BOT - Marina</div>
+        <div class="small muted">Bot</div>
+      </div>
+      <div class="player-card">
+        <div style="font-weight:800">BOT - Río</div>
+        <div class="small muted">Bot</div>
+      </div>
+    </div>
+
+    <div style="margin-top:12px; display:flex; gap:8px;">
+      <button class="btn" id="btnStart">Iniciar partida</button>
+      <button class="btn secondary" data-nav="menu">Volver</button>
+    </div>
+  </section>
+
+  <!-- GAME -->
+  <section id="game" class="panel">
+    <h2>Juego</h2>
+    <div class="game-grid">
+      <div class="left-col">
+        <div class="stats panel">
+          <div>
+            <div class="small muted">Turno</div>
+            <div id="turnIndicator" class="big">—</div>
+          </div>
+          <div style="text-align:right">
+            <div class="small muted">Fichas restantes</div>
+            <div id="tokensLeft" class="big">12</div>
+          </div>
+        </div>
+
+        <div class="board panel">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div><strong>Tablero</strong><div class="small muted">Toma cartas y rescata ajolotes</div></div>
+            <div class="small muted">Cartas rectangulares</div>
+          </div>
+
+          <div class="tokens" id="tokensArea" title="Fichas (solo visual)">
+            <!-- tokens will render here -->
+          </div>
+
+          <div style="margin-top:6px">
+            <div class="small muted">Contadores:</div>
+            <div style="display:flex; gap:8px; margin-top:6px;">
+              <div class="stats" style="flex:1; flex-direction:column; align-items:flex-start;">
+                <div class="small muted">Tu basura</div>
+                <div id="playerTrash" class="big">0</div>
+              </div>
+              <div class="stats" style="flex:1; flex-direction:column; align-items:flex-start;">
+                <div class="small muted">Tu puntos</div>
+                <div id="playerScore" class="big">0</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button id="drawCard" class="btn">Tomar carta</button>
+            <button id="openShop" class="btn secondary">Ir a Tienda</button>
+            <button id="passTurn" class="btn secondary">Pasar turno</button>
+          </div>
+
+          <div style="margin-top:8px">
+            <div class="small muted">Acción reciente</div>
+            <div id="lastAction" class="log">Bienvenido a Axolotl Panic — usa "Tomar carta" para comenzar.</div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:12px;">
+          <strong>Jugadores</strong>
+          <div style="margin-top:8px" id="playersArea">
+            <!-- player cards -->
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="panel">
+          <strong>Tienda</strong>
+          <div class="small muted">La comida aumenta puntos finales. Compra con basura.</div>
+          <div style="margin-top:12px" class="shop-grid">
+            <div class="shop-item">
+              <div style="font-weight:800">Comida +1</div>
+              <div class="price">Costo: 3 Basura</div>
+              <div style="margin-top:8px"><button class="btn" data-buy="1">Comprar</button></div>
+            </div>
+            <div class="shop-item">
+              <div style="font-weight:800">Comida +2</div>
+              <div class="price">Costo: 5 Basura</div>
+              <div style="margin-top:8px"><button class="btn" data-buy="2">Comprar</button></div>
+            </div>
+            <div class="shop-item">
+              <div style="font-weight:800">Comida +3</div>
+              <div class="price">Costo: 8 Basura</div>
+              <div style="margin-top:8px"><button class="btn" data-buy="3">Comprar</button></div>
+            </div>
+          </div>
+
+          <div style="margin-top:12px">
+            <button class="btn secondary" id="closeShop">Salir Tienda</button>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:12px;">
+          <strong>Scoreboard</strong>
+          <div style="margin-top:8px" id="scoreboard">
+            <!-- scores -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- END -->
+  <section id="end" class="panel">
+    <h2>Fin de la partida</h2>
+    <div id="endSummary" style="margin-top:12px"></div>
+    <div style="margin-top:12px">
+      <button class="btn" data-nav="menu">Volver al menú</button>
+    </div>
+  </section>
+
+  <footer>Prototipo — axolotl panic • hechas con HTML/CSS/JS</footer>
+</div>
+
+<script>
+/*
+  Prototipo: Axolotl Panic
+  - 1 humano + 2 bots
+  - 12 fichas de ajolote generadas según probabilidades: amarillo 10%, café 30%, rosa 60%
+  - Cartas rectangulares al tomar carta: basura 60% (con subprobabilidades), comodín 20%, rescatar 20%
+  - Tienda con precios:
+      +1 => 3 basura
+      +2 => 5 basura
+      +3 => 8 basura
+  - Juego termina cuando se rescatan las 12 fichas (tokens array vacía)
+*/
+
+(() => {
+  // --- Configuración ---
+  const CONFIG = {
+    totalTokens: 12,
+    tokenProbs: [ {color:'yellow', p:0.10, pts:3},
+                  {color:'brown', p:0.30, pts:2},
+                  {color:'pink', p:0.60, pts:1} ],
+    cardProbs: { trash: 0.60, wildcard: 0.20, rescue: 0.20 },
+    trashBreakdown: [ {value:1, p:0.40}, {value:2, p:0.35}, {value:3, p:0.25} ],
+    shop: { 1:3, 2:5, 3:8 }
+  };
+
+  // --- Estado del juego ---
+  let tokens = []; // lista de tokens disponibles (color/pts)
+  let players = []; // {id,name,isBot,trash,score,inventory:[]}
+  let turnIndex = 0;
+  let gameActive = false;
+
+  // DOM references
+  const sections = {
+    menu: document.getElementById('menu'),
+    tutorial: document.getElementById('tutorial'),
+    credits: document.getElementById('credits'),
+    lobby: document.getElementById('lobby'),
+    game: document.getElementById('game'),
+    end: document.getElementById('end')
+  };
+  const btnPlay = document.getElementById('btnPlay');
+  const btnTutorial = document.getElementById('btnTutorial');
+  const btnCredits = document.getElementById('btnCredits');
+  const btnExit = document.getElementById('btnExit');
+  const btnStart = document.getElementById('btnStart');
+
+  const drawCardBtn = document.getElementById('drawCard');
+  const openShopBtn = document.getElementById('openShop');
+  const passTurnBtn = document.getElementById('passTurn');
+  const closeShopBtn = document.getElementById('closeShop');
+  const tokensArea = document.getElementById('tokensArea');
+  const tokensLeft = document.getElementById('tokensLeft');
+  const lastAction = document.getElementById('lastAction');
+  const turnIndicator = document.getElementById('turnIndicator');
+  const playerTrashEl = document.getElementById('playerTrash');
+  const playerScoreEl = document.getElementById('playerScore');
+  const playersArea = document.getElementById('playersArea');
+  const scoreboard = document.getElementById('scoreboard');
+  const endSummary = document.getElementById('endSummary');
+
+  // Helpers
+  function showSection(id){
+    Object.values(sections).forEach(s => s.classList.remove('active'));
+    sections[id].classList.add('active');
+  }
+
+  function rand(){
+    return Math.random();
+  }
+
+  // Weighted choice helper: items = [{... , p: probability}, ...]
+  function weightedPick(items){
+    const r = rand();
+    let acc = 0;
+    for(let i=0;i<items.length;i++){
+      acc += items[i].p;
+      if(r <= acc) return items[i];
+    }
+    return items[items.length-1];
+  }
+
+  // Initialize tokens array using token probabilities
+  function generateTokens(){
+    tokens = [];
+    for(let i=0;i<CONFIG.totalTokens;i++){
+      const picked = weightedPick(CONFIG.tokenProbs);
+      tokens.push({ color: picked.color, pts: picked.pts });
+    }
+    renderTokens();
+    tokensLeft.textContent = tokens.length;
+  }
+
+  function renderTokens(){
+    tokensArea.innerHTML = '';
+    tokens.forEach((t, idx) => {
+      const d = document.createElement('div');
+      d.className = 'token ' + t.color;
+      d.title = `${t.color} (${t.pts} pts)`;
+      d.textContent = t.pts;
+      tokensArea.appendChild(d);
+    });
+    tokensLeft.textContent = tokens.length;
+  }
+
+  function log(msg){
+    const dt = new Date().toLocaleTimeString();
+    lastAction.innerHTML = `<div style="font-size:12px;color:var(--muted)">${dt}</div><div>${msg}</div>` + lastAction.innerHTML;
+  }
+
+  // Create players (1 human + 2 bots)
+  function createPlayers(){
+    players = [];
+    players.push({ id:0, name:'Tú', isBot:false, trash:0, score:0, food:0 });
+    players.push({ id:1, name:'BOT - Marina', isBot:true, trash:0, score:0, food:0 });
+    players.push({ id:2, name:'BOT - Río', isBot:true, trash:0, score:0, food:0 });
+    renderPlayers();
+  }
+
+  function renderPlayers(){
+    playersArea.innerHTML = '';
+    players.forEach(pl => {
+      const div = document.createElement('div');
+      div.className = 'player-card panel';
+      div.style.display='flex';
+      div.style.justifyContent='space-between';
+      div.style.alignItems='center';
+      div.style.padding='8px';
+      div.innerHTML = `<div>
+          <div style="font-weight:700">${pl.name}</div>
+          <div class="small muted">${pl.isBot ? 'Bot' : 'Humano'}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="small muted">Puntos: <strong>${pl.score}</strong></div>
+          <div class="small muted">Basura: <strong>${pl.trash}</strong></div>
+          <div class="small muted">Comida: <strong>${pl.food}</strong></div>
+        </div>`;
+      playersArea.appendChild(div);
+    });
+    updateScoreboard();
+  }
+
+  function updateScoreboard(){
+    scoreboard.innerHTML = '';
+    players.forEach(pl=>{
+      const card = document.createElement('div');
+      card.className = 'score-card';
+      card.innerHTML = `<div style="font-weight:700">${pl.name}</div>
+                        <div class="small muted">Puntos: ${pl.score}</div>
+                        <div class="small muted">Basura: ${pl.trash}</div>
+                        <div class="small muted">Comida: ${pl.food}</div>`;
+      scoreboard.appendChild(card);
+    });
+  }
+
+  // Decide order by dice roll: each player roll 1-6, highest first
+  function decideOrder(){
+    const rolls = players.map(p => ({ id:p.id, r: Math.floor(Math.random()*6)+1 }));
+    // sort by r desc
+    rolls.sort((a,b)=> b.r - a.r);
+    // rearrange players
+    const ordered = rolls.map(x => players.find(p=>p.id===x.id));
+    players = ordered;
+    log('Orden de juego decidido por dados: ' + rolls.map(r=>`${players.find(p=>p.id===r.id).name}(${r.r})`).join(' • '));
+    renderPlayers();
+  }
+
+  // Draw a card according to probabilities
+  function drawCard(forPlayer){
+    // returns object {type: 'trash'|'wildcard'|'rescue', detail: ...}
+    const r = rand();
+    const {trash, wildcard, rescue} = CONFIG.cardProbs;
+    if(r <= trash){
+      // pick breakdown
+      const pick = weightedPick(CONFIG.trashBreakdown);
+      return { type:'trash', value: pick.value };
+    } else if(r <= trash + wildcard){
+      return { type:'wildcard' };
+    } else {
+      return { type:'rescue' };
+    }
+  }
+
+  // When rescue: remove one token randomly from tokens[] and award points to player
+  function rescueToken(player){
+    if(tokens.length === 0) return null;
+    // pick random index uniformly
+    const idx = Math.floor(Math.random() * tokens.length);
+    const t = tokens.splice(idx,1)[0];
+    player.score += t.pts;
+    tokensLeft.textContent = tokens.length;
+    renderTokens();
+    return t;
+  }
+
+  // Shop purchase
+  function buyFood(player, foodAmount){
+    const cost = CONFIG.shop[foodAmount];
+    if(player.trash >= cost){
+      player.trash -= cost;
+      player.food += foodAmount;
+      player.score += foodAmount; // comida aumenta puntos finales (aplicado inmediatamente para simplificar)
+      log(`${player.name} compró Comida +${foodAmount} (costo ${cost} basura).`);
+      renderPlayers();
+      return true;
+    } else {
+      if(!player.isBot) alert('No tienes suficiente basura para comprar eso.');
+      return false;
+    }
+  }
+
+  // Bot AI: when in shop, bots buy best affordable (prioritize +3 then +2 then +1)
+  function botShopLogic(bot){
+    const choices = [3,2,1];
+    for(const c of choices){
+      if(bot.trash >= CONFIG.shop[c]){
+        buyFood(bot, c);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // End check
+  function checkEndCondition(){
+    if(tokens.length === 0){
+      endGame();
+      return true;
+    }
+    return false;
+  }
+
+  // Next turn
+  function nextTurn(){
+    // advance index
+    turnIndex = (turnIndex + 1) % players.length;
+    updateTurnUI();
+    if(players[turnIndex].isBot){
+      // simulate bot action with small delay
+      setTimeout(()=> botDoTurn(players[turnIndex]), 700);
+    }
+  }
+
+  function updateTurnUI(){
+    const pl = players[turnIndex];
+    turnIndicator.textContent = pl.name;
+    // update human counters
+    const human = players.find(p => !p.isBot);
+    playerTrashEl.textContent = human.trash;
+    playerScoreEl.textContent = human.score;
+    renderPlayers();
+  }
+
+  // Human takes card
+  function humanTakeCard(){
+    if(!gameActive) return;
+    const player = players[turnIndex];
+    if(player.isBot){
+      alert('No es tu turno.');
+      return;
+    }
+    const card = drawCard(player);
+    handleCardResult(player, card);
+    // after human action they can decide to open shop or pass. We'll let them decide.
+    // but if end condition reached, finish
+    if(!checkEndCondition()){
+      updateTurnUI();
+    }
+  }
+
+  // Bot does its full turn automatically: draw card, optionally shop, then pass
+  function botDoTurn(bot){
+    if(!gameActive) return;
+    const card = drawCard(bot);
+    handleCardResult(bot, card);
+    // simple shop AI
+    botShopLogic(bot);
+    if(!checkEndCondition()){
+      nextTurn();
+    }
+  }
+
+  // Handle card effect
+  function handleCardResult(player, card){
+    if(card.type === 'trash'){
+      player.trash += card.value;
+      log(`${player.name} tomó carta: Basura +${card.value}. Ahora tiene ${player.trash} basura.`);
+    } else if(card.type === 'wildcard'){
+      log(`${player.name} tomó carta: ¡Comodín! (Desafío activado) — por ahora sin efecto adicional.`);
+      // placeholder: show challenge message; no extra effect
+    } else if(card.type === 'rescue'){
+      // rescue one token
+      const t = rescueToken(player);
+      if(t){
+        log(`${player.name} pescó un ajolote (${t.color}, ${t.pts} pts) y ganó ${t.pts} puntos.`);
+      } else {
+        log(`${player.name} intentó rescatar pero no hay fichas restantes.`);
+      }
+    }
+    renderPlayers();
+    // if player is bot, we advance turn in bot flow. For human we wait for their action (shop/pass)
+    if(player.isBot === false){
+      // human — don't auto advance: wait until passTurn pressed or shop then pass
+    } else {
+      // bot already handled in botDoTurn
+    }
+  }
+
+  function passTurn(){
+    if(!gameActive) return;
+    // if it's human's turn, allow pass
+    const player = players[turnIndex];
+    if(player.isBot){
+      alert('No puedes pasar en turno de bot.');
+      return;
+    }
+    log(`${player.name} pasó su turno.`);
+    nextTurn();
+  }
+
+  // End game summary
+  function endGame(){
+    gameActive = false;
+    // compute winner (highest score)
+    const sorted = [...players].sort((a,b)=> b.score - a.score);
+    const winner = sorted[0];
+    let html = `<div class="small muted">Juego terminado — todas las fichas fueron rescatadas.</div><div style="margin-top:12px">`;
+    sorted.forEach((p,i)=>{
+      const winnerBadge = (p.id === winner.id) ? ' 🏆' : '';
+      html += `<div style="margin-top:6px; padding:8px; border-radius:8px; background:#fff; box-shadow:var(--shadow)"><strong>${i+1}. ${p.name}${winnerBadge}</strong> — Puntos: ${p.score} — Basura: ${p.trash} — Comida: ${p.food}</div>`;
+    });
+    html += `</div>`;
+    endSummary.innerHTML = html;
+    showSection('end');
+    log('Partida finalizada. Ganador: ' + winner.name);
+  }
+
+  // --- Event bindings ---
+  // Menu navigation
+  btnPlay.addEventListener('click', ()=>{
+    showSection('lobby');
+  });
+  btnTutorial.addEventListener('click', ()=> showSection('tutorial'));
+  btnCredits.addEventListener('click', ()=> showSection('credits'));
+  btnExit.addEventListener('click', ()=> {
+    if(confirm('¿Cerrar el prototipo (esto recargará la página)?')) location.reload();
+  });
+
+  document.querySelectorAll('[data-nav]').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      const target = e.currentTarget.getAttribute('data-nav');
+      showSection(target);
+    });
+  });
+
+  // Start game from Lobby
+  btnStart.addEventListener('click', ()=>{
+    // init everything
+    generateTokens();
+    createPlayers();
+    decideOrder();
+    turnIndex = 0;
+    gameActive = true;
+    updateTurnUI();
+    showSection('game');
+
+    // If the first player is a bot, trigger bot turn shortly
+    if(players[turnIndex].isBot){
+      setTimeout(()=> botDoTurn(players[turnIndex]), 700);
+    }
+  });
+
+  // Game controls
+  drawCardBtn.addEventListener('click', humanTakeCard);
+  passTurnBtn.addEventListener('click', passTurn);
+  openShopBtn.addEventListener('click', ()=> {
+    // open shop UI: we already show shop in right column; we won't change sections, but log
+    log('Abriendo tienda. Puedes comprar comida o salir.');
+  });
+  closeShopBtn.addEventListener('click', () => {
+    log('Saliendo de tienda.');
+  });
+
+  // Shop buy buttons
+  document.querySelectorAll('[data-buy]').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      const amount = Number(e.currentTarget.getAttribute('data-buy'));
+      const human = players.find(p => !p.isBot);
+      // only allow buying on human's turn or even otherwise? We'll allow whenever but cost applied to their trash
+      if(!human) return;
+      const success = buyFood(human, amount);
+      if(success){
+        renderPlayers();
+      }
+    });
+  });
+
+  // On section load return to menu
+  document.querySelectorAll('button[data-nav="menu"]').forEach(b => {
+    b.addEventListener('click', ()=> {
+      // reset everything when returning to menu
+      resetGame();
+    });
+  });
+
+  // Reset game
+  function resetGame(){
+    tokens = [];
+    players = [];
+    gameActive = false;
+    lastAction.innerHTML = 'Bienvenido a Axolotl Panic — usa "Tomar carta" para comenzar.';
+    showSection('menu');
+  }
+
+  // handle window focus: ensure UI reflects state
+  function updateUI(){
+    renderTokens();
+    renderPlayers();
+    tokensLeft.textContent = tokens.length;
+  }
+
+  // init
+  resetGame();
+
+})();
+</script>
+</body>
+</html>
