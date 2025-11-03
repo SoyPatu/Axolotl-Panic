@@ -50,6 +50,6 @@ __Diagrama de Flujo y Prototipo__: - [Ver aquí](https://www.figma.com/design/6n
 
 __Presentación Axolotl Panic!: Deluxe Edition__: - [Ver aquí](https://www.canva.com/design/DAG3l6bJsqs/HXOmrypzdJK5lryfbxQPRw/edit?utm_content=DAG3l6bJsqs&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
-__Chat con la IA: ChatGPT__: - [Ver aquí] (https://chatgpt.com/g/g-p-690258bc41608191bfb721bd4aefbb53-axolotl-panic/project)
+__Chat con la IA: ChatGPT__: - [Ver aquí](https://chatgpt.com/g/g-p-690258bc41608191bfb721bd4aefbb53-axolotl-panic/project)
 
 
