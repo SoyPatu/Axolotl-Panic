@@ -52,4 +52,4 @@ __Presentación Axolotl Panic!: Deluxe Edition__: - [Ver aquí](https://www.canv
 
 __Chat con la IA: ChatGPT__: - [Ver aquí] (https://chatgpt.com/g/g-p-690258bc41608191bfb721bd4aefbb53-axolotl-panic/project)
 
-__Prototipo por ChatGPT__: - [Ver aquí] (https://SoyPatu.github.io/axolotl_chatgpt.html)
+
