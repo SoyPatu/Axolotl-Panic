@@ -13,6 +13,8 @@
 
 - Creación del prototipo y creador del proyecto de Figma
 
+- Creación del Prototipo del juego con ChatGPT y Grok
+
 ### Celeste Elisheba Bautista Altamirano
 
 #### Roll:
