@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>AXOLOTL PANIC - DELUXE EDITION</title>
+    <style>
+        body {
+            font-family: 'Montserrat', Arial, sans-serif;
+            margin: 0; padding: 0; background: #f4f9fe;
+            min-height: 100vh; color: #2b3142;
+        }
+        .center { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh;}
+        .main-title { font-size: 2.6em; font-weight: bold; margin-bottom: 30px; color: #ee4cb7;}
+        .axolotl-btn {
+            font-size:1.3em; margin:14px;padding:10px 36px;
+            background: linear-gradient(90deg, #6be5f6,#f9f86a,#ee4cb7); color:#fff;border:none;border-radius:18px;cursor:pointer;font-weight:700;
+            transition: box-shadow .2s;
+        }
+        .axolotl-btn:hover { box-shadow:0 0 8px #ee4cb7; }
+        .axolotl-btn:disabled { opacity:0.5; cursor:not-allowed; }
+        .menu-img {max-width:200px; margin-bottom:30px;}
+        .hide {display:none;}
+        .game-area, .tutorial, .credits, .ranking, .store-modal {background:white;border-radius:24px;box-shadow:0 5px 30px #c1defa99;padding:24px 18px;margin:20px;}
+        .players-row {display:flex;justify-content:space-around;margin-bottom:10px;flex-wrap:wrap;}
+        .player-box {background:#cdf9f9;padding:8px 12px;margin:5px 5px 13px 5px;border-radius:13px;min-width:105px;text-align:center;box-shadow:0 2px 6px #eef1ea44;}
+        .bot-box {background:#e1cffb;}
+        .you {background:#fdccec;}
+        .active-player {border:3px solid #ee4cb7;}
+        .btn-group {margin:16px 0;}
+        .store-modal, .modal-overlay {position:fixed;top:0;left:0;right:0;bottom:0;z-index:99;background:#fff9e8cc;backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;}
+        .store-content, .modal-content {background:#fff;padding:20px;border-radius:14px;max-width:330px;box-shadow:0 0 12px #fbee8c99;}
+        .fichas-row {display:flex;justify-content:center;flex-wrap:wrap;margin:10px 0;}
+        .ficha-circle {width:32px;height:32px;border-radius:50%;background:#bbb;margin:3px;box-shadow:0 0 3px #cc9;cursor:pointer;transition:transform 0.2s;}
+        .ficha-circle:hover {transform:scale(1.1);}
+        .fichaRosa {background:#ee4cb7;}
+        .fichaCafe {background:#bc8c4b;}
+        .fichaAmarilla {background:#f9f86a;}
+        .ficha-selectable {border:3px solid #515cff;transform:scale(1.15);}
+        .dialogs {background:#fff4f9;color:#bc6c98;border-radius:12px;padding:7px;margin:5px auto;max-width:400px;box-shadow:0 1px 6px #f0cdf0;}
+        .ranking-header {font-size:1.3em;color:#515cff;margin-bottom:12px;}
+        .ranking-list {padding:0;}
+        .ranking-list li {list-style:none;font-size:1.1em;margin:8px 0;}
+        .btn-exit { float:right;background:#f9b3ef;color:#fff;font-weight:700;border:none;border-radius:12px;padding:7px 18px;cursor:pointer;}
+        .btn-exit:hover { background:#ee4cb7; }
+        .carta-almacenada {background:#fffacd;border:2px solid #f9f86a;padding:8px;margin:6px;border-radius:8px;cursor:pointer;display:inline-block;transition:all 0.2s;}
+        .carta-almacenada:hover {background:#f9f86a;color:#2b3142;transform:scale(1.05);}
+        .modal-buttons {display:flex;gap:10px;justify-content:center;margin-top:20px;}
+        .modal-buttons button {padding:8px 16px;font-size:1em;border:none;border-radius:8px;cursor:pointer;font-weight:700;}
+        .btn-aceptar {background:#6be5f6;color:#fff;}
+        .btn-aceptar:hover {background:#48a8c8;}
+        .btn-cancelar {background:#ff6b6b;color:#fff;}
+        .btn-cancelar:hover {background:#d63031;}
+        .store-item {margin:12px 0;padding:12px;background:#eee;border-radius:12px;}
+        .store-item b {display:block;margin-bottom:5px;color:#515cff;}
+        .store-item-desc {font-size:0.9em;color:#666;margin:3px 0;}
+        @media (max-width:600px) {
+            .main-title {font-size:2em;} .player-box, .bot-box, .you {min-width:80px;padding:7px;}
+        }
+    </style>
+</head>
+<body>
+<div id="menu" class="center">
+    <img class="menu-img" src="AXOLOTL-PANIC-_-DELUXE-EDITION.jpg" alt="Axolotl Title">
+    <div class="main-title">AXOLOTL PANIC<br>DELUXE EDITION</div>
+    <button class="axolotl-btn" onclick="showGameplay()">JUGAR</button>
+    <button class="axolotl-btn" onclick="showTutorial()">TUTORIAL</button>
+    <button class="axolotl-btn" onclick="showCredits()">CRÉDITOS</button>
+    <button class="axolotl-btn" onclick="exitGame()">SALIR</button>
+</div>
+
+<div id="tutorial" class="center hide">
+    <div class="game-area tutorial">
+        <button class="btn-exit" onclick="backMenu()">REGRESAR</button>
+        <h2 style="text-align:center;margin-bottom:20px;">TUTORIAL</h2>
+        <div id="tutorialText" contenteditable="true" style="min-height:140px;line-height:1.4;">Escribe aquí el texto del tutorial...</div>
+    </div>
+</div>
+
+<div id="credits" class="center hide">
+    <div class="game-area credits">
+        <button class="btn-exit" onclick="backMenu()">REGRESAR</button>
+        <h2 style="text-align:center;margin-bottom:20px;">CRÉDITOS</h2>
+        <div id="creditsText" contenteditable="true" style="min-height:90px;">Escribe aquí los créditos del equipo...</div>
+    </div>
+</div>
+
+<div id="gameplay" class="hide">
+    <div class="game-area">
+        <button class="btn-exit" onclick="salirAlMenu()">Salir al Menú</button>
+        <div class="dialogs" id="gameDialog" style="display:none;"></div>
+        <div class="players-row" id="playersArea"></div>
+        <div id="turnIndicator" style="margin-bottom:15px;color:#ee4cb7;font-weight:bold;"></div>
+        
+        <div style="margin-bottom:14px;">
+            <button id="recogerCartaBtn" class="axolotl-btn hide">Recoger Carta Nueva</button>
+            <button id="tiendaBtn" class="axolotl-btn">Ir a La Tiendita</button>
+        </div>
+        
+        <div id="cartasArea" style="background:#fffacd;padding:10px;border-radius:8px;margin:10px 0;">
+            <h4>Cartas Almacenadas (Haz clic para usar):</h4>
+            <div id="cartasAlmacenadas"></div>
+        </div>
+
+        <h4 style="text-align:center;">Fichas de Ajolotes</h4>
+        <div class="fichas-row" id="fichasCirculares"></div>
+        
+        <button id="aplicarCartaBtn" class="axolotl-btn hide">Aplicar Carta Nueva</button>
+        <button id="almacenarCartaBtn" class="axolotl-btn hide">Almacenar Carta Nueva</button>
+        <button id="finalizarTurnoBtn" class="axolotl-btn hide">Finalizar Turno</button>
+    </div>
+    <div id="storeModal" class="store-modal hide">
+        <div class="store-content">
+            <button class="btn-exit" onclick="closeStore()">Salir</button>
+            <h3 style="text-align:center;color:#515cff;">La Tiendita</h3>
+            <p style="text-align:center;font-size:0.9em;color:#666;">Gasta basura para comprar puntos</p>
+            <div id="storeItems"></div>
+        </div>
+    </div>
+</div>
+
+<div id="fichaSeleccionModal" class="modal-overlay hide">
+    <div class="modal-content">
+        <h3 style="text-align:center;color:#515cff;">Selecciona una Ficha</h3>
+        <p style="text-align:center;color:#666;">Haz clic en una ficha gris para seleccionarla</p>
+        <div class="fichas-row" id="fichasSelectModal"></div>
+        <div class="modal-buttons">
+            <button class="btn-aceptar" onclick="aceptarFichaSeleccionada()">Aceptar</button>
+            <button class="btn-cancelar" onclick="cancelarSeleccionFicha()">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<div id="ranking" class="center hide">
+    <div class="game-area ranking">
+        <h2 class="ranking-header">FIN DEL JUEGO</h2>
+        <ul class="ranking-list" id="rankingList"></ul>
+        <button class="axolotl-btn" onclick="backMenu()">Volver al Menú</button>
+    </div>
+</div>
+
+<script>
+/* ====== VARIABLES DEL JUEGO ====== */
+const jugadoresBase = [
+    { nombre:"Tu", tipo:"humano" },
+    { nombre:"Bot 1", tipo:"bot" },
+    { nombre:"Bot 2", tipo:"bot" },
+    { nombre:"Bot 3", tipo:"bot" }
+];
+const fichasBase = [
+    {color:'rosado',valor:0.5}, {color:'café',valor:1},
+    {color:'amarillo',valor:1.5}, {color:'rosado',valor:0.5},
+    {color:'café',valor:1}, {color:'amarillo',valor:1.5},
+    {color:'rosado',valor:0.5}, {color:'café',valor:1},
+    {color:'amarillo',valor:1.5}, {color:'rosado',valor:0.5},
+    {color:'café',valor:1}, {color:'amarillo',valor:1.5},
+];
+const cartasBasura = [
+    {tipo:'basura',descripcion:'Basura +1',valor:1},
+    {tipo:'basura',descripcion:'Basura +2',valor:2},
+    {tipo:'basura',descripcion:'Basura +3',valor:3}
+];
+const cartasEspeciales = [
+    {tipo:'especial',descripcion:'Robo-Basura'},
+    {tipo:'especial',descripcion:'Hora de Pescar'}
+];
+const cartasComodinReto = [
+    {tipo:'comodin_reto',descripcion:'Intercambio de Ajolotes'},
+    {tipo:'comodin_reto',descripcion:'Duelo de Perder Turno'}
+];
+const cartasComodinEvento = [
+    {tipo:'comodin_evento',descripcion:'Rotación de Basura'},
+    {tipo:'comodin_evento',descripcion:'Cambio de Rotación de Turnos'}
+];
+const tiendaObjetos = [
+    {nombre:'Objeto 1', costo:3, puntos:1},
+    {nombre:'Objeto 2', costo:6, puntos:2},
+    {nombre:'Objeto 3', costo:10, puntos:4}
+];
+const tiempoLimiteTurno = 8;
+const tiempoBotTurno = 5;
+
+let jugadores, fichas, cartasMain, turnoActual, turnosTotales, maxCartasAlmacenadas=5, sentidoGiro=1, timerRef, juegoEnCurso=false, cartaActual=null, rankingDone=false;
+let fichaSeleccionadaIdx = null;
+let esperandoSeleccionFicha = false;
+
+/* ====== FUNCIONES UI PRINCIPALES ====== */
+function showMenu() {
+    hideAll(); document.getElementById('menu').classList.remove('hide');
+}
+function showTutorial(){ hideAll();document.getElementById('tutorial').classList.remove('hide');}
+function showCredits(){ hideAll();document.getElementById('credits').classList.remove('hide');}
+function showGameplay(){
+    hideAll(); document.getElementById('gameplay').classList.remove('hide');
+    initGame();
+}
+function hideAll(){
+    for(let id of ['menu','tutorial','credits','gameplay','ranking','fichaSeleccionModal']) document.getElementById(id).classList.add('hide');
+}
+function exitGame(){
+    if (confirm('¿Seguro que quieres salir del juego?')) window.close();
+}
+function backMenu(){
+    juegoEnCurso=false; rankingDone=false; clearTimeout(timerRef); esperandoSeleccionFicha=false;
+    hideAll();
+    document.getElementById('menu').classList.remove('hide');
+}
+function salirAlMenu(){
+    if(confirm('¿Salir de la partida y volver al menú?')){
+        backMenu();
+    }
+}
+
+/* ====== INICIAR EL JUEGO ====== */
+function initGame(){
+    jugadores = JSON.parse(JSON.stringify(jugadoresBase));
+    for (let j of jugadores) {
+        j.basura=0;
+        j.puntaje=0;
+        j.fichas=[];
+        j.cartas=[];
+        j.turnosPerdidos=0;
+    }
+    fichas = shuffleArray([...fichasBase]);
+    cartasMain = shuffleArray([
+        ...cartasBasura,...cartasBasura,...cartasEspeciales,...cartasEspeciales,
+        ...cartasComodinReto,...cartasComodinEvento
+    ]);
+    turnoActual = sortTurnos();
+    turnosTotales = 0;
+    sentidoGiro = 1;
+    juegoEnCurso=true;
+    cartaActual=null;
+    fichaSeleccionadaIdx = null;
+    esperandoSeleccionFicha = false;
+    updateUI();
+    doTurno();
+}
+
+/* ====== UI DEL GAMEPLAY PRINCIPAL ====== */
+function updateUI(){
+    let playersRow = document.getElementById('playersArea');
+    playersRow.innerHTML = "";
+    jugadores.forEach((j,idx)=>{
+        let classes = ['player-box'];
+        if(j.tipo=='bot') classes.push('bot-box');
+        if(turnoActual===idx && juegoEnCurso) classes.push('active-player');
+        if(idx==0) classes.push('you');
+        let html = `<div class="${classes.join(' ')}">
+            <b>${j.nombre}</b>
+            <div>Basura: ${j.basura}</div>
+            <div>Puntaje: ${j.puntaje}</div>
+            <div>Fichas: ${j.fichas.map(f=>f.valor).join(',')}</div>
+            <div>Cartas: ${j.cartas.length}</div>
+        </div>`;
+        playersRow.innerHTML += html;
+    });
+
+    let cartasArea = document.getElementById('cartasAlmacenadas');
+    cartasArea.innerHTML="";
+    if (jugadores[turnoActual].tipo=='humano' && jugadores[turnoActual].cartas.length > 0) {
+        let cartas=jugadores[turnoActual].cartas;
+        cartas.forEach((carta,i)=>{
+            cartasArea.innerHTML+= `<div class="carta-almacenada" onclick="usarCartaAlmacenada(${i})" title="Click para usar">${carta.descripcion}</div>`;
+        });
+    } else if(jugadores[turnoActual].tipo=='humano') {
+        cartasArea.innerHTML = "<em>No tienes cartas almacenadas aún.</em>";
+    }
+
+    let fichasRow = document.getElementById('fichasCirculares');
+    fichasRow.innerHTML="";
+    fichas.forEach((f,i)=>{
+        let colorclass = f.revealed ? (f.color=='rosado'?'fichaRosa':(f.color=='café'?'fichaCafe':'fichaAmarilla')) : '';
+        fichasRow.innerHTML+= `<div class="ficha-circle ${colorclass}"></div>`;
+    });
+
+    let turnInd = document.getElementById('turnIndicator');
+    turnInd.innerHTML = `Turno de: <span style="color:#48e">${jugadores[turnoActual].nombre}</span>`;
+}
+
+function mostrarDialogo(msg) {
+    let dlg=document.getElementById('gameDialog');
+    dlg.innerHTML=msg; dlg.style.display="block";
+    setTimeout(()=>{dlg.style.display="none";},3000);
+}
+
+/* ====== TURNO AUTOMÁTICO Y BOT ====== */
+function doTurno(){
+    if(!juegoEnCurso) return;
+    updateUI();
+    let jugador=jugadores[turnoActual];
+    if(jugador.turnosPerdidos>0){
+        jugador.turnosPerdidos--;
+        mostrarDialogo(jugador.nombre+" perdió su turno.");
+        siguienteTurno();
+        return;
+    }
+    if (jugador.tipo=='humano'){
+        document.getElementById('recogerCartaBtn').classList.remove('hide');
+        document.getElementById('finalizarTurnoBtn').classList.add('hide');
+        document.getElementById('aplicarCartaBtn').classList.add('hide');
+        document.getElementById('almacenarCartaBtn').classList.add('hide');
+        timerRef = setTimeout(()=>{siguienteTurno();},tiempoLimiteTurno*1000);
+    }else{
+        document.getElementById('recogerCartaBtn').classList.add('hide');
+        timerRef = setTimeout(()=>{botTurn(jugador)},tiempoBotTurno*1000);
+    }
+}
+
+function botTurn(j){
+    let acciones = [];
+    if(j.cartas.length<maxCartasAlmacenadas) acciones.push('almacenar');
+    acciones.push('aplicar');
+    let comprarTienda = (j.basura>=tiendaObjetos[2].costo)&&(j.puntaje<jugadores[0].puntaje);
+    let usarCartaEspecial = j.cartas.some(c=>c.tipo==='especial') && (j.puntaje < Math.max(...jugadores.map(x=>x.puntaje)));
+    if(comprarTienda) acciones.push('comprar');
+    else if(j.basura>=tiendaObjetos[0].costo) acciones.push('comprar');
+    if(usarCartaEspecial) acciones.push('usar_especial');
+    let accionElegida = acciones[Math.floor(Math.random()*acciones.length)];
+    if(accionElegida==='comprar'){ openStoreBot(j); setTimeout(()=>{siguienteTurno(); }, 2200); return;}
+    cartaActual=pickRandomCarta();
+    if(j.cartas.length>=maxCartasAlmacenadas) accionElegida='aplicar';
+    if(accionElegida==='almacenar' && j.cartas.length<maxCartasAlmacenadas) j.cartas.push(cartaActual);
+    else aplicarCartaBot();
+    mostrarDialogo(j.nombre+" ha hecho su jugada.");
+    setTimeout(()=>{siguienteTurno();},2250);
+}
+
+function aplicarCartaBot(){
+    let c = cartaActual;
+    let j = jugadores[turnoActual];
+    if (c.tipo==='basura') j.basura+=c.valor;
+    if (c.descripcion==='Robo-Basura') {
+        let victima = elegirVictimaBot();
+        let vval = dado(6);
+        jugadores[victima].basura = Math.max(0, jugadores[victima].basura-vval);
+        j.basura += vval;
+    }
+    if (c.descripcion==='Hora de Pescar'){
+        let idx=buscarMejorFicha();
+        if(idx!==-1) {
+            let f=fichas[idx]; f.revealed=true; j.fichas.push(f); j.puntaje+=f.valor; fichas.splice(idx,1);
+        }
+    }
+    if (c.descripcion==='Intercambio de Ajolotes'){
+        let victima=elegirVictimaBot();
+        dueloIntercambioFichas(turnoActual,victima);
+    }
+    if (c.descripcion==='Duelo de Perder Turno') {
+        let victima=elegirVictimaBot();
+        dueloPerderTurno(turnoActual,victima);
+    }
+    if (c.descripcion==='Rotación de Basura'){rotarBasuraBot();}
+    if (c.descripcion==='Cambio de Rotación de Turnos'){ sentidoGiro*=-1; }
+}
+
+function buscarMejorFicha(){
+    let amarillo=fichas.findIndex(f=>f.color==='amarillo'&&!f.revealed);
+    if(amarillo!==-1) return amarillo;
+    let cafe=fichas.findIndex(f=>f.color==='café'&&!f.revealed);
+    if(cafe!==-1) return cafe;
+    return fichas.findIndex(f=>!f.revealed);
+}
+
+function elegirVictimaBot(){
+    let otros=jugadores.map((j,i)=>i).filter(idx=>idx!==turnoActual);
+    let lider=otros.reduce((a,b)=> jugadores[a].puntaje<jugadores[b].puntaje?b:a, otros[0]);
+    return lider;
+}
+
+function dueloIntercambioFichas(a,b){
+    let nA=dado(6), nB=dado(6);
+    if (nA>nB&&jugadores[b].fichas.length){
+        let f=jugadores[b].fichas.pop();jugadores[a].fichas.push(f);jugadores[a].puntaje+=f.valor;jugadores[b].puntaje-=f.valor;
+    }
+}
+
+function dueloPerderTurno(a,b){
+    let nA=dado(6), nB=dado(6);
+    if (nA<nB) jugadores[a].turnosPerdidos++;
+    else jugadores[b].turnosPerdidos++;
+}
+
+function rotarBasuraBot(){
+    let arr=jugadores.map(j=>j.basura);
+    for(let i=0;i<jugadores.length;i++) jugadores[i].basura=arr[(i+sentidoGiro+jugadores.length)%jugadores.length];
+}
+
+function openStoreBot(j){
+    let robusto = tiendaObjetos.filter(o=>j.basura>=o.costo).pop();
+    if(robusto){ j.basura-=robusto.costo;j.puntaje+=robusto.puntos;}
+}
+
+function pickRandomCarta(){ 
+    if(cartasMain.length === 0) {
+        cartasMain = shuffleArray([
+            ...cartasBasura,...cartasBasura,...cartasEspeciales,...cartasEspeciales,
+            ...cartasComodinReto,...cartasComodinEvento
+        ]);
+    }
+    return cartasMain.shift();
+}
+
+function siguienteTurno(){
+    turnosTotales++;
+    checkFinJuego();
+    if(!juegoEnCurso) return;
+    turnoActual=(turnoActual+sentidoGiro+jugadores.length)%jugadores.length;
+    doTurno();
+}
+
+function checkFinJuego(){
+    if (fichas.length===0 || turnosTotales>=30){
+        juegoEnCurso=false;
+        mostrarRanking();
+    }
+}
+
+function mostrarRanking(){
+    hideAll(); document.getElementById('ranking').classList.remove('hide');
+    let ranking=jugadores.map(j=>({nombre:j.nombre,puntaje:j.puntaje})).sort((a,b)=>b.puntaje-a.puntaje);
+    let html=""; ranking.forEach((j,i)=>{ html+= `<li><b>${i+1}. ${j.nombre}</b> — ${j.puntaje} puntos</li>`; });
+    document.getElementById('rankingList').innerHTML=html;
+}
+
+/* ====== FUNCIONES DEL JUGADOR HUMANO ====== */
+document.getElementById('recogerCartaBtn').onclick=function(){
+    clearTimeout(timerRef);
+    cartaActual=pickRandomCarta();
+    mostrarDialogo("Sacaste: "+cartaActual.descripcion);
+    document.getElementById('aplicarCartaBtn').classList.remove('hide');
+    document.getElementById('almacenarCartaBtn').classList.remove('hide');
+    document.getElementById('recogerCartaBtn').classList.add('hide');
+    document.getElementById('finalizarTurnoBtn').classList.remove('hide');
+};
+
+document.getElementById('aplicarCartaBtn').onclick=function(){ 
+    aplicarCartaHumano();
+};
+
+document.getElementById('almacenarCartaBtn').onclick=function(){
+    let j=jugadores[turnoActual];
+    if(j.cartas.length<maxCartasAlmacenadas) j.cartas.push(cartaActual);
+    document.getElementById('aplicarCartaBtn').classList.add('hide');
+    document.getElementById('almacenarCartaBtn').classList.add('hide');
+    document.getElementById('finalizarTurnoBtn').classList.remove('hide');
+    cartaActual = null;
+    mostrarDialogo("Carta almacenada. Presiona Finalizar Turno.");
+    updateUI();
+};
+
+document.getElementById('finalizarTurnoBtn').onclick=function(){
+    clearTimeout(timerRef);
+    siguienteTurno();
+};
+
+document.getElementById('tiendaBtn').onclick=function(){
+    openStore();
+};
+
+function usarCartaAlmacenada(idx){
+    let j=jugadores[turnoActual];
+    if(j.tipo!=='humano' || idx<0 || idx>=j.cartas.length) {
+        console.log("Error: no se puede usar carta");
+        return;
+    }
+    clearTimeout(timerRef);
+    cartaActual = j.cartas[idx];
+    j.cartas.splice(idx,1);
+    mostrarDialogo("Usaste: "+cartaActual.descripcion);
+    updateUI();
+    setTimeout(()=>{
+        aplicarCartaHumano();
+    }, 500);
+}
+
+function aplicarCartaHumano(){
+    let c = cartaActual; 
+    let j = jugadores[turnoActual];
+    
+    if (c.tipo==='basura'){ 
+        j.basura+=c.valor;
+        mostrarDialogo("+"+c.valor+" Basura");
+    }
+    else if (c.descripcion==='Robo-Basura'){
+        let victima=prompt("¿A quién le robas basura? (indica número 1-4)"); 
+        victima=parseInt(victima)-1;
+        if(isNaN(victima)||victima===turnoActual||victima<0||victima>=jugadores.length)
+            victima=(turnoActual+1)%jugadores.length;
+        let vval=dado(6);
+        jugadores[victima].basura=Math.max(0,jugadores[victima].basura-vval);
+        j.basura+=vval;
+        mostrarDialogo("¡Robaste "+vval+" basura!");
+    }
+    else if(c.descripcion==='Hora de Pescar'){
+        abrirSeleccionFicha();
+        return;
+    }
+    else if(c.descripcion==='Intercambio de Ajolotes'){
+        let victima=parseInt(prompt("¿Con quién intercambias ajolotes? Indica número 1-4"),10)-1;
+        if(isNaN(victima)||victima===turnoActual||victima<0||victima>=jugadores.length)
+            victima=(turnoActual+1)%jugadores.length;
+        dueloIntercambioFichas(turnoActual,victima);
+        mostrarDialogo("¡Intercambio realizado!");
+    }
+    else if(c.descripcion==='Duelo de Perder Turno'){
+        let victima=parseInt(prompt("¿Contra quién duelo perder turno? Indica número 1-4"),10)-1;
+        if(isNaN(victima)||victima===turnoActual||victima<0||victima>=jugadores.length)
+            victima=(turnoActual+1)%jugadores.length;
+        dueloPerderTurno(turnoActual,victima);
+        mostrarDialogo("¡Duelo de turnos!");
+    }
+    else if(c.descripcion==='Rotación de Basura'){
+        rotarBasuraBot();
+        mostrarDialogo("¡Rotación de basura!");
+    }
+    else if(c.descripcion==='Cambio de Rotación de Turnos'){
+        sentidoGiro*=-1;
+        mostrarDialogo("¡Rotación invertida!");
+    }
+    
+    document.getElementById('aplicarCartaBtn').classList.add('hide');
+    document.getElementById('almacenarCartaBtn').classList.add('hide');
+    document.getElementById('finalizarTurnoBtn').classList.remove('hide');
+    cartaActual = null;
+    updateUI();
+}
+
+/* ====== MODAL DE SELECCIÓN DE FICHA ====== */
+function abrirSeleccionFicha(){
+    esperandoSeleccionFicha = true;
+    fichaSeleccionadaIdx = null;
+    let modal = document.getElementById('fichaSeleccionModal');
+    modal.classList.remove('hide');
+    
+    let fichasSelectRow = document.getElementById('fichasSelectModal');
+    fichasSelectRow.innerHTML="";
+    fichas.forEach((f,i)=>{
+        let colorclass = f.revealed ? (f.color=='rosado'?'fichaRosa':(f.color=='café'?'fichaCafe':'fichaAmarilla')) : '';
+        fichasSelectRow.innerHTML+= `<div class="ficha-circle ${colorclass}" id="fichaSelectable${i}" onclick="seleccionarFichaModal(${i})" style="cursor:pointer;"></div>`;
+    });
+}
+
+function seleccionarFichaModal(idx){
+    fichaSeleccionadaIdx = idx;
+    for(let i=0; i<fichas.length; i++){
+        let elem = document.getElementById('fichaSelectable'+i);
+        if(elem) elem.classList.remove('ficha-selectable');
+    }
+    let elem = document.getElementById('fichaSelectable'+idx);
+    if(elem) elem.classList.add('ficha-selectable');
+}
+
+function aceptarFichaSeleccionada(){
+    if(fichaSeleccionadaIdx === null){
+        alert('Debes seleccionar una ficha primero');
+        return;
+    }
+    let j=jugadores[turnoActual];
+    let f=fichas[fichaSeleccionadaIdx];
+    f.revealed=true;
+    j.fichas.push(f);
+    j.puntaje+=f.valor;
+    fichas.splice(fichaSeleccionadaIdx,1);
+    
+    cancelarSeleccionFicha();
+    document.getElementById('finalizarTurnoBtn').classList.remove('hide');
+    mostrarDialogo("¡Pescaste una ficha "+f.color+" +"+f.valor+" puntos!");
+    updateUI();
+}
+
+function cancelarSeleccionFicha(){
+    esperandoSeleccionFicha = false;
+    fichaSeleccionadaIdx = null;
+    document.getElementById('fichaSeleccionModal').classList.add('hide');
+    cartaActual = null;
+}
+
+function openStore(){
+    clearTimeout(timerRef);
+    let modal=document.getElementById('storeModal');
+    modal.classList.remove('hide');
+    let items=document.getElementById('storeItems');
+    let j=jugadores[turnoActual];
+    items.innerHTML="";
+    tiendaObjetos.forEach((obj,i)=>{
+        let canBuy=j.basura>=obj.costo;
+        items.innerHTML+= `<div class="store-item">
+            <b>${obj.nombre}</b>
+            <div class="store-item-desc">Costo: <strong>${obj.costo}</strong> basura</div>
+            <div class="store-item-desc">Puntos que adds: <strong>+${obj.puntos}</strong></div>
+            <button class="axolotl-btn" ${canBuy?'':'disabled'} onclick="buyStoreItem(${i})">Comprar</button>
+        </div>`;
+    });
+}
+
+function buyStoreItem(idx){
+    let j=jugadores[turnoActual];
+    let obj=tiendaObjetos[idx];
+    if(j.basura>=obj.costo){ 
+        j.basura-=obj.costo;
+        j.puntaje+=obj.puntos;
+        mostrarDialogo(`¡Compraste ${obj.nombre}! +${obj.puntos} puntos`);
+    }
+    closeStore(); 
+    siguienteTurno();
+}
+
+function closeStore(){ 
+    document.getElementById('storeModal').classList.add('hide'); 
+}
+
+/* ====== UTILITARIOS DEL JUEGO ====== */
+function sortTurnos(){
+    let dados=jugadores.map(()=>dado(6));
+    let max=dados.indexOf(Math.max(...dados));
+    return max;
+}
+
+function shuffleArray(arr){
+    for(let i=arr.length-1;i>0;i--){
+        let j=Math.floor(Math.random()*(i+1));
+        [arr[i],arr[j]]=[arr[j],arr[i]];
+    }
+    return arr;
+}
+
+function dado(n){
+    return 1+Math.floor(Math.random()*n);
+}
+
+/* ====== INICIO AUTOMÁTICO ====== */
+showMenu();
+</script>
+</body>
+</html>
