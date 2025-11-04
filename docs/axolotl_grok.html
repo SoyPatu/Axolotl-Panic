@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axolotl Panic - Salvemos Ajolotes</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Fredoka One', cursive; }
+        body { background: linear-gradient(to bottom, #0f3d5e, #1a6b9f); color: white; text-align: center; overflow: hidden; }
+        
+        /* MENÚ */
+        #menu { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('https://i.ibb.co/9bY7YkP/axolotl-bg.png') center/cover; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; }
+        #menu h1 { font-size: 6rem; color: #ff69b4; text-shadow: 0 0 30px #ff1493; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .btn { margin: 20px; padding: 20px 50px; font-size: 2rem; background: #ffd700; color: #333; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 15px 30px rgba(0,0,0,0.5); transition: 0.3s; }
+        .btn:hover { transform: scale(1.2); background: #ff4500; color: white; }
+
+        /* TABLERO */
+        #game { display: none; padding: 20px; }
+        .tablero { background: #40c4ff; border: 15px solid white; border-radius: 30px; padding: 30px; max-width: 1100px; margin: 20px auto; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        .jugador { position: absolute; background: rgba(255,255,255,0.9); color: #333; padding: 15px; border-radius: 50%; font-weight: bold; }
+        #tu { bottom: 20px; left: 50%; transform: translateX(-50%); }
+        #roger { top: 20px; left: 50%; transform: translateX(-50%); }
+        #pato { bottom: 50%; left: 20px; }
+        #eli { bottom: 50%; right: 20px; }
+
+        /* FICHAS */
+        .fichas { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin: 30px 0; }
+        .ficha { width: 100px; height: 100px; background: #333; border: 8px solid gold; border-radius: 50%; cursor: grab; transition: 0.3s; }
+        .ficha:hover { transform: scale(1.2); }
+        .ficha.revelada { border: 8px solid lime; }
+        .rosa { background: pink !important; }
+        .cafe { background: brown !important; }
+        .amarilla { background: yellow !important; color: black; }
+
+        /* CARTAS */
+        .mazo { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        .carta { width: 100px; height: 150px; background: white; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.4); cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 1.2rem; color: black; }
+        .basura { background: #d3d3d3; }
+        .comodin { background: #ffd700; }
+        .pescar { background: #ff69b4; }
+
+        /* TIENDA */
+        #tienda-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 200; justify-content: center; align-items: center; }
+        .tienda { background: #333; padding: 40px; border-radius: 50%; width: 400px; height: 400px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .comida-btn { margin: 10px; padding: 15px 30px; background: #90ee90; color: black; border-radius: 30px; font-weight: bold; }
+
+        /* PUNTOS */
+        .puntos { position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.7); padding: 15px; border-radius: 15px; font-size: 1.2rem; }
+
+        /* FIN */
+        #fin { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 300; justify-content: center; align-items: center; flex-direction: column; }
+        #fin h2 { font-size: 5rem; color: #ffd700; }
+    </style>
+</head>
+<body>
+
+    <!-- MENÚ -->
+    <div id="menu">
+        <h1>AXOLOTL PANIC</h1>
+        <button class="btn" id="jugar">JUGAR</button>
+        <button class="btn" id="salir">SALIR</button>
+    </div>
+
+    <!-- JUEGO -->
+    <div id="game">
+        <div class="puntos">
+            <div>🗑️ Basura: <span id="basura">0</span></div>
+            <div>🦎 Ajolotes: <span id="ajolotes">0</span></div>
+            <div>⭐ Puntos: <span id="puntos">0</span></div>
+            <div>Turno: <span id="turno">TÚ</span></div>
+        </div>
+
+        <h2>¡Turno de <span id="turno-nombre">TÚ</span>!</h2>
+
+        <div class="tablero">
+            <div class="jugador" id="tu">TÚ</div>
+            <div class="jugador" id="roger">Roger</div>
+            <div class="jugador" id="pato">Pato</div>
+            <div class="jugador" id="eli">Eli</div>
+
+            <!-- FICHAS -->
+            <h3>🏞️ LAGO XOCHIMILCO - 12 FICHAS</h3>
+            <div class="fichas" id="lago"></div>
+
+            <!-- MAZO -->
+            <h3>🎴 RECOGER CARTA</h3>
+            <div class="mazo">
+                <div class="carta basura" id="carta-mazo">¡TOCA!</div>
+            </div>
+
+            <button class="btn" id="tienda-btn">🛒 La Tiendita</button>
+            <button class="btn" id="fin-turno">✅ Fin Turno</button>
+        </div>
+    </div>
+
+    <!-- TIENDA -->
+    <div id="tienda-modal">
+        <div class="tienda">
+            <h2>🛒 LA TIENDITA</h2>
+            <p>🗑️ Tienes: <span id="basura-tienda">0</span></p>
+            <button class="comida-btn" data-costo="5" data-pts="1">+1 ⭐ (5🗑️) × <span class="disp">6</span></button>
+            <button class="comida-btn" data-costo="10" data-pts="2">+2 ⭐ (10🗑️) × <span class="disp">4</span></button>
+            <button class="comida-btn" data-costo="15" data-pts="3">+3 ⭐ (15🗑️) × <span class="disp">2</span></button>
+            <button class="btn" id="cerrar-tienda">❌ Salir</button>
+        </div>
+    </div>
+
+    <!-- FIN -->
+    <div id="fin">
+        <h2>¡GANASTE!</h2>
+        <p id="ganador"></p>
+        <button class="btn" onclick="location.reload()">JUGAR OTRA</button>
+    </div>
+
+    <audio id="musica" loop src="https://assets.mixkit.co/sfx/preview/mixkit-mexican-guitarron-1568.mp3"></audio>
+    <audio id="pesca" src="https://assets.mixkit.co/sfx/preview/mixkit-fishing-reel-catch-1567.mp3"></audio>
+
+    <script>
+        // === VARIABLES ===
+        let jugadores = ['TÚ', 'Roger', 'Pato', 'Eli'];
+        let turno = 0;
+        let datos = jugadores.map(() => ({ basura: 0, ajolotes: [], puntos: 0 }));
+        let fichasRestantes = 12;
+        let comodinDeck = [
+            "Rotación de basura a la derecha", "Rotación de basura a la izquierda",
+            "Cambio de rotación de turnos", "Intercambio de Ajolotes", "Duelo de perder un turno",
+            "Consigues un Ajolote", "Robo de Ajolotes", "Hora de Rescatar", "Robo de Ajolotes", 
+            "Duelo de perder un turno", "Intercambio de Ajolotes", "Rotación de basura", "Cambio de turnos",
+            "Consigues un Ajolote", "Robo", "Duelo", "Intercambio"
+        ];
+        let comidaDisp = [6, 4, 2];
+
+        // === INICIO ===
+        document.getElementById('jugar').onclick = () => {
+            document.getElementById('menu').style.display = 'none';
+            document.getElementById('game').style.display = 'block';
+            document.getElementById('musica').play();
+            crearFichas();
+            actualizarPuntos();
+        };
+
+        // === FICHAS ===
+        function crearFichas() {
+            const lago = document.getElementById('lago');
+            const colores = Array(4).fill('amarilla').concat(Array(6).fill('cafe'), Array(2).fill('rosa'));
+            for (let i = colores.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [colores[i], colores[j]] = [colores[j], colores[i]];
+            }
+            colores.forEach(color => {
+                const f = document.createElement('div');
+                f.className = 'ficha';
+                f.onclick = () => revelarFicha(f, color);
+                lago.appendChild(f);
+            });
+        }
+
+        function revelarFicha(ficha, color) {
+            if (ficha.classList.contains('revelada')) return;
+            ficha.classList.add('revelada', color);
+            const pts = color === 'rosa' ? 1 : color === 'cafe' ? 2 : 3;
+            datos[turno].ajolotes.push(color);
+            datos[turno].puntos += pts;
+            document.getElementById('pesca').play();
+            alert(`¡${jugadores[turno]} pescó un ajolote ${color.toUpperCase()}! +${pts} pts`);
+            fichasRestantes--;
+            actualizarPuntos();
+            if (fichasRestantes === 0) finJuego();
+        }
+
+        // === CARTA ALEATORIA ===
+        document.getElementById('carta-mazo').onclick = () => {
+            const rand = Math.random();
+            if (rand < 0.6) {
+                const basura = [1,2,3][Math.floor(Math.random()*3)];
+                datos[turno].basura += basura;
+                alert(`¡+${basura} 🗑️!`);
+            } else if (rand < 0.8) {
+                const comodin = comodinDeck[Math.floor(Math.random()*comodinDeck.length)];
+                alert(`¡COMODÍN! ${comodin}`);
+                ejecutarComodin(comodin);
+            } else {
+                alert("¡Carta de PESCAR! Elige una ficha del lago.");
+            }
+            actualizarPuntos();
+        };
+
+        function ejecutarComodin(evento) {
+            // Implementación simple de eventos
+            if (evento.includes("Rotación")) {
+                const dir = evento.includes("derecha") ? 1 : -1;
+                const basuraTemp = datos.map(j => j.basura);
+                for (let i = 0; i < 4; i++) {
+                    datos[(i + dir + 4) % 4].basura = basuraTemp[i];
+                }
+                alert("¡Basura rotada!");
+            } else if (evento.includes("Cambio de rotación")) {
+                jugadores.reverse();
+                alert("¡Turnos invertidos!");
+            } else if (evento.includes("Robo")) {
+                const victima = prompt("¿A quién robas? (Roger/Pato/Eli)").toLowerCase();
+                const idx = jugadores.findIndex(j => j.toLowerCase().includes(victima));
+                if (idx > 0 && datos[idx].ajolotes.length > 0) {
+                    const robado = datos[idx].ajolotes.pop();
+                    datos[turno].ajolotes.push(robado);
+                    datos[turno].puntos += robado === 'rosa' ? 1 : robado === 'cafe' ? 2 : 3;
+                    alert(`¡Robaste un ${robado}!`);
+                }
+            }
+            // Agrega más eventos según necesites
+            actualizarPuntos();
+        }
+
+        // === TIENDA ===
+        document.getElementById('tienda-btn').onclick = abrirTienda;
+        document.getElementById('cerrar-tienda').onclick = () => document.getElementById('tienda-modal').style.display = 'none';
+        document.querySelectorAll('.comida-btn').forEach(btn => {
+            btn.onclick = () => {
+                const costo = parseInt(btn.dataset.costo);
+                const pts = parseInt(btn.dataset.pts);
+                const idx = [...document.querySelectorAll('.comida-btn')].indexOf(btn);
+                if (datos[turno].basura >= costo && comidaDisp[idx] > 0) {
+                    datos[turno].basura -= costo;
+                    datos[turno].puntos += pts;
+                    comidaDisp[idx]--;
+                    btn.querySelector('.disp').textContent = comidaDisp[idx];
+                    alert(`¡Compraste +${pts} pts!`);
+                    actualizarPuntos();
+                } else alert("¡No puedes comprar!");
+            };
+        });
+
+        function abrirTienda() {
+            document.getElementById('basura-tienda').textContent = datos[turno].basura;
+            document.getElementById('tienda-modal').style.display = 'flex';
+        }
+
+        // === TURNO ===
+        document.getElementById('fin-turno').onclick = () => {
+            turno = (turno + 1) % 4;
+            document.getElementById('turno-nombre').textContent = jugadores[turno];
+            if (turno !== 0) botJuega();
+            actualizarPuntos();
+        };
+
+        function botJuega() {
+            setTimeout(() => {
+                // Bot simple: recoge carta o pesca
+                if (Math.random() < 0.7) {
+                    const rand = Math.random();
+                    if (rand < 0.6) datos[turno].basura += [1,2,3][Math.floor(Math.random()*3)];
+                    else if (rand < 0.8) ejecutarComodin(comodinDeck[0]);
+                    else if (document.querySelectorAll('.ficha:not(.revelada)').length > 0) {
+                        const fichas = document.querySelectorAll('.ficha:not(.revelada)');
+                        const randomFicha = fichas[Math.floor(Math.random() * fichas.length)];
+                        const color = ['rosa','cafe','amarilla'][Math.floor(Math.random()*3)];
+                        revelarFicha(randomFicha, color);
+                    }
+                }
+                if (datos[turno].basura > 10 && Math.random() < 0.5) {
+                    datos[turno].basura -= 10;
+                    datos[turno].puntos += 2;
+                }
+                turno = 0;
+                document.getElementById('turno-nombre').textContent = 'TÚ';
+                actualizarPuntos();
+            }, 2000);
+        }
+
+        // === ACTUALIZAR ===
+        function actualizarPuntos() {
+            document.getElementById('basura').textContent = datos[0].basura;
+            document.getElementById('ajolotes').textContent = datos[0].ajolotes.length;
+            document.getElementById('puntos').textContent = datos[0].puntos;
+            document.getElementById('turno').textContent = jugadores[turno];
+        }
+
+        function finJuego() {
+            const ganador = datos.reduce((max, j, i) => j.puntos > (datos[max].puntos) ? i : max, 0);
+            document.getElementById('ganador').textContent = `${jugadores[ganador]} GANÓ con ${datos[ganador].puntos} puntos!`;
+            document.getElementById('fin').style.display = 'flex';
+        }
+    </script>
+</body>
+</html>
