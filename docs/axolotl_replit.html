@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AXOLOTL PANIC - DELUXE EDITION</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 3em;
+            background: linear-gradient(45deg, #ee4cb7, #6be5f6, #f9f86a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .menu-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .btn {
+            padding: 20px 40px;
+            font-size: 1.5em;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .btn-pink {
+            background: #ee4cb7;
+            color: white;
+        }
+
+        .btn-cyan {
+            background: #6be5f6;
+            color: #333;
+        }
+
+        .btn-yellow {
+            background: #f9f86a;
+            color: #333;
+        }
+
+        .btn-purple {
+            background: #9b59b6;
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .players-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .player-box {
+            padding: 15px;
+            border-radius: 10px;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .player-box.human {
+            background: #ffb3d9;
+        }
+
+        .player-box.bot {
+            background: #d8b3ff;
+        }
+
+        .player-box.active-turn {
+            border: 5px solid #ee4cb7;
+            box-shadow: 0 0 20px rgba(238, 76, 183, 0.5);
+        }
+
+        .player-box h3 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .player-box p {
+            margin: 5px 0;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .turn-indicator {
+            text-align: center;
+            font-size: 2em;
+            margin: 20px 0;
+            color: #333;
+        }
+
+        .turn-indicator span {
+            color: #6be5f6;
+            font-weight: bold;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .action-buttons .btn {
+            font-size: 1.1em;
+            padding: 15px 30px;
+        }
+
+        .stored-cards {
+            background: #fffacd;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .stored-cards h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .cards-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .card-tag {
+            background: #ff9ff3;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .card-tag:hover {
+            background: #ff69b4;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .tokens-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+        }
+
+        .tokens-section h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .tokens-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .token {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 0.8em;
+        }
+
+        .token.pink {
+            background: #ff69b4;
+        }
+
+        .token.brown {
+            background: #8b4513;
+        }
+
+        .token.yellow {
+            background: #ffd700;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .shop-item {
+            background: #f9f9f9;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+        }
+
+        .shop-item h4 {
+            color: #ee4cb7;
+            margin-bottom: 10px;
+        }
+
+        .message-box {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 1.2em;
+            color: #2e7d32;
+            border: 2px solid #4caf50;
+        }
+
+        .exit-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .dice-animation {
+            font-size: 3em;
+            text-align: center;
+            margin: 20px 0;
+            animation: roll 0.5s ease-in-out;
+        }
+
+        @keyframes roll {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(90deg); }
+            50% { transform: rotate(180deg); }
+            75% { transform: rotate(270deg); }
+        }
+
+        .token-select {
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+
+        .token-select:hover {
+            transform: scale(1.1);
+        }
+
+        .token-select.selected {
+            border: 3px solid #0066ff;
+            box-shadow: 0 0 15px rgba(0, 102, 255, 0.5);
+        }
+
+        .tutorial-content, .credits-content {
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .tutorial-content h3, .credits-content h3 {
+            margin: 20px 0 10px 0;
+            color: #ee4cb7;
+        }
+
+        .tutorial-content ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .ranking-list {
+            margin: 20px 0;
+        }
+
+        .ranking-item {
+            padding: 15px;
+            margin: 10px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .ranking-item.first {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #333;
+            font-size: 1.5em;
+        }
+
+        @media (max-width: 768px) {
+            .players-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .btn {
+                font-size: 1.2em;
+                padding: 15px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="menuScreen" class="screen active">
+    <h1>🦎 AXOLOTL PANIC<br>DELUXE EDITION 🦎</h1>
+    <div class="menu-buttons">
+        <button class="btn btn-pink" onclick="startGame()">JUGAR</button>
+        <button class="btn btn-cyan" onclick="showTutorial()">TUTORIAL</button>
+        <button class="btn btn-yellow" onclick="showCredits()">CRÉDITOS</button>
+        <button class="btn btn-purple" onclick="exitGame()">SALIR</button>
+    </div>
+</div>
+
+<div id="tutorialScreen" class="screen">
+    <h1>📖 TUTORIAL</h1>
+    <div class="tutorial-content">
+        <h3>Objetivo del Juego</h3>
+        <p>Ser el jugador con más puntos al final del juego. Gana puntos pescando fichas de ajolotes y comprando objetos en la tienda.</p>
+        
+        <h3>¿Cómo Jugar?</h3>
+        <ul>
+            <li><strong>Basura:</strong> Recurso que ganas con cartas. Úsala para comprar en la tienda.</li>
+            <li><strong>Puntos:</strong> Pesca fichas (+0.5, +1, +1.5) o compra objetos (+1, +2, +4).</li>
+            <li><strong>Cartas:</strong> Recógelas cada turno. Aplícalas o almacénalas (máx 5).</li>
+            <li><strong>Fichas:</strong> 12 fichas de ajolotes: rosas (0.5), cafés (1), amarillas (1.5).</li>
+        </ul>
+
+        <h3>Tipos de Cartas</h3>
+        <ul>
+            <li><strong>Basura +1/+2/+3:</strong> Ganas basura.</li>
+            <li><strong>Robo-Basura:</strong> Tira un dado y róbale basura a un rival.</li>
+            <li><strong>Hora de Pescar:</strong> Escoge y pesca una ficha de ajolote.</li>
+            <li><strong>Intercambio de Ajolotes:</strong> Duelo de dados. Si ganas, robas una ficha.</li>
+            <li><strong>Duelo de Perder Turno:</strong> Duelo de dados. El perdedor pierde su próximo turno.</li>
+            <li><strong>Rotación de Basura:</strong> Todos intercambian basura en orden.</li>
+            <li><strong>Cambio de Rotación:</strong> Invierte el orden de los turnos.</li>
+        </ul>
+
+        <h3>Tu Turno</h3>
+        <ul>
+            <li>Tienes 8 segundos para actuar o pierdes el turno.</li>
+            <li>Recoge una carta nueva, visita la tienda o usa una carta almacenada.</li>
+            <li>Termina tu turno cuando estés listo.</li>
+        </ul>
+
+        <h3>Fin del Juego</h3>
+        <p>El juego termina cuando se pescan las 12 fichas o después de 30 turnos totales. ¡El jugador con más puntos gana!</p>
+    </div>
+    <div class="menu-buttons" style="margin-top: 30px;">
+        <button class="btn btn-pink" onclick="showMenu()">Volver al Menú</button>
+    </div>
+</div>
+
+<div id="creditsScreen" class="screen">
+    <h1>🌟 CRÉDITOS</h1>
+    <div class="credits-content">
+        <h3>Desarrollado por:</h3>
+        <p>Tu Equipo de Desarrollo</p>
+        
+        <h3>Diseño del Juego:</h3>
+        <p>Concepto original y mecánicas por el equipo creativo</p>
+        
+        <h3>Programación:</h3>
+        <p>HTML5, CSS3 y JavaScript Vanilla</p>
+        
+        <h3>Arte y Diseño:</h3>
+        <p>Colores vibrantes inspirados en los axolotes mexicanos</p>
+        
+        <h3>Agradecimientos Especiales:</h3>
+        <p>A todos los amantes de los juegos de mesa y los adorables ajolotes 🦎</p>
+        
+        <h3>Versión:</h3>
+        <p>DELUXE EDITION 1.0</p>
+        
+        <p style="margin-top: 30px; text-align: center; font-style: italic;">
+            ¡Gracias por jugar AXOLOTL PANIC!
+        </p>
+    </div>
+    <div class="menu-buttons" style="margin-top: 30px;">
+        <button class="btn btn-pink" onclick="showMenu()">Volver al Menú</button>
+    </div>
+</div>
+
+<div id="gameScreen" class="screen">
+    <button class="btn btn-purple exit-btn" onclick="exitToMenu()">Salir al Menú</button>
+    
+    <h1 style="font-size: 2em;">🦎 AXOLOTL PANIC 🦎</h1>
+    
+    <div class="players-row" id="playersRow"></div>
+    
+    <div class="turn-indicator" id="turnIndicator"></div>
+    
+    <div id="messageBox" class="message-box" style="display: none;"></div>
+    
+    <div class="action-buttons" id="actionButtons"></div>
+    
+    <div class="stored-cards">
+        <h3>Cartas Almacenadas (Haz clic para usar):</h3>
+        <div class="cards-list" id="storedCardsList"></div>
+    </div>
+    
+    <div class="tokens-section">
+        <h3>Fichas de Ajolotes</h3>
+        <div class="tokens-grid" id="tokensGrid"></div>
+    </div>
+</div>
+
+<div id="rankingScreen" class="screen">
+    <h1>🏆 RANKING FINAL 🏆</h1>
+    <div class="ranking-list" id="rankingList"></div>
+    <div class="menu-buttons" style="margin-top: 30px;">
+        <button class="btn btn-pink" onclick="showMenu()">Volver al Menú</button>
+    </div>
+</div>
+
+<div id="shopModal" class="modal">
+    <div class="modal-content">
+        <h2>🛒 La Tiendita</h2>
+        <div id="shopItems"></div>
+        <button class="btn btn-purple" style="margin-top: 20px; width: 100%;" onclick="closeShop()">Salir</button>
+    </div>
+</div>
+
+<div id="fishModal" class="modal">
+    <div class="modal-content">
+        <h2>🎣 Hora de Pescar</h2>
+        <p>Selecciona una ficha de ajolote:</p>
+        <div class="tokens-grid" id="fishTokensGrid" style="margin: 20px 0;"></div>
+        <button class="btn btn-cyan" style="width: 100%;" onclick="confirmFish()">Aceptar</button>
+    </div>
+</div>
+
+<div id="playerSelectModal" class="modal">
+    <div class="modal-content">
+        <h2 id="selectModalTitle">Selecciona un Jugador</h2>
+        <div id="playerSelectButtons"></div>
+    </div>
+</div>
+
+<div id="diceModal" class="modal">
+    <div class="modal-content">
+        <h2 id="diceTitle">🎲 Lanzando Dados</h2>
+        <div id="diceResults"></div>
+        <button class="btn btn-cyan" style="margin-top: 20px; width: 100%;" onclick="closeDiceModal()">Continuar</button>
+    </div>
+</div>
+
+<script>
+const CARD_TYPES = {
+    TRASH_1: { name: 'Basura +1', type: 'trash', value: 1 },
+    TRASH_2: { name: 'Basura +2', type: 'trash', value: 2 },
+    TRASH_3: { name: 'Basura +3', type: 'trash', value: 3 },
+    STEAL: { name: 'Robo-Basura', type: 'special' },
+    FISH: { name: 'Hora de Pescar', type: 'special' },
+    SWAP_TOKENS: { name: 'Intercambio de Ajolotes', type: 'challenge' },
+    SKIP_TURN: { name: 'Duelo de Perder Turno', type: 'challenge' },
+    ROTATE_TRASH: { name: 'Rotación de Basura', type: 'event' },
+    REVERSE_ORDER: { name: 'Cambio de Rotación de Turnos', type: 'event' }
+};
+
+const SHOP_ITEMS = [
+    { name: 'Snack Pequeño', cost: 2, points: 1 },
+    { name: 'Comida Deliciosa', cost: 4, points: 2 },
+    { name: 'Banquete Especial', cost: 6, points: 4 }
+];
+
+let gameState = {
+    players: [],
+    currentPlayerIndex: 0,
+    turnOrder: [0, 1, 2, 3],
+    totalTurns: 0,
+    tokens: [],
+    deck: [],
+    currentCard: null,
+    playerTimer: null,
+    selectedToken: null,
+    pendingAction: null
+};
+
+function initGame() {
+    gameState.players = [
+        { name: 'Tú', isHuman: true, trash: 0, score: 0, tokens: [], storedCards: [], skipNextTurn: false },
+        { name: 'Bot 1', isHuman: false, trash: 0, score: 0, tokens: [], storedCards: [], skipNextTurn: false },
+        { name: 'Bot 2', isHuman: false, trash: 0, score: 0, tokens: [], storedCards: [], skipNextTurn: false },
+        { name: 'Bot 3', isHuman: false, trash: 0, score: 0, tokens: [], storedCards: [], skipNextTurn: false }
+    ];
+    
+    gameState.tokens = [];
+    for (let i = 0; i < 4; i++) {
+        gameState.tokens.push({ value: 0.5, color: 'pink', revealed: false });
+        gameState.tokens.push({ value: 1, color: 'brown', revealed: false });
+        gameState.tokens.push({ value: 1.5, color: 'yellow', revealed: false });
+    }
+    
+    gameState.deck = [];
+    for (let i = 0; i < 5; i++) {
+        gameState.deck.push('TRASH_1', 'TRASH_2', 'TRASH_3');
+    }
+    for (let i = 0; i < 3; i++) {
+        gameState.deck.push('STEAL', 'FISH', 'SWAP_TOKENS', 'SKIP_TURN');
+    }
+    for (let i = 0; i < 2; i++) {
+        gameState.deck.push('ROTATE_TRASH', 'REVERSE_ORDER');
+    }
+    
+    gameState.currentPlayerIndex = 0;
+    gameState.turnOrder = [0, 1, 2, 3];
+    gameState.totalTurns = 0;
+    gameState.currentCard = null;
+    
+    renderGame();
+    startTurn();
+}
+
+function renderGame() {
+    const playersRow = document.getElementById('playersRow');
+    playersRow.innerHTML = '';
+    
+    gameState.players.forEach((player, idx) => {
+        const playerBox = document.createElement('div');
+        playerBox.className = `player-box ${player.isHuman ? 'human' : 'bot'}`;
+        if (idx === gameState.currentPlayerIndex) {
+            playerBox.classList.add('active-turn');
+        }
+        
+        const tokensStr = player.tokens.map(t => t.value).join(', ') || 'Ninguna';
+        
+        playerBox.innerHTML = `
+            <h3>${player.name}</h3>
+            <p><strong>Basura:</strong> ${player.trash}</p>
+            <p><strong>Puntaje:</strong> ${player.score.toFixed(1)}</p>
+            <p><strong>Fichas:</strong> ${tokensStr}</p>
+            <p><strong>Cartas:</strong> ${player.storedCards.length}</p>
+        `;
+        
+        playersRow.appendChild(playerBox);
+    });
+    
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    document.getElementById('turnIndicator').innerHTML = `Turno de: <span>${currentPlayer.name}</span>`;
+    
+    renderTokens();
+    renderStoredCards();
+}
+
+function renderTokens() {
+    const tokensGrid = document.getElementById('tokensGrid');
+    tokensGrid.innerHTML = '';
+    
+    gameState.tokens.forEach((token, idx) => {
+        const tokenDiv = document.createElement('div');
+        tokenDiv.className = `token ${token.revealed ? token.color : ''}`;
+        tokenDiv.textContent = token.revealed ? token.value : '?';
+        tokensGrid.appendChild(tokenDiv);
+    });
+}
+
+function renderStoredCards() {
+    const cardsList = document.getElementById('storedCardsList');
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    
+    if (!currentPlayer.isHuman) {
+        cardsList.innerHTML = '<p>No es tu turno</p>';
+        return;
+    }
+    
+    if (currentPlayer.storedCards.length === 0) {
+        cardsList.innerHTML = '<p>No tienes cartas almacenadas</p>';
+        return;
+    }
+    
+    cardsList.innerHTML = '';
+    currentPlayer.storedCards.forEach((card, idx) => {
+        const cardTag = document.createElement('div');
+        cardTag.className = 'card-tag';
+        cardTag.textContent = CARD_TYPES[card].name;
+        cardTag.onclick = () => useStoredCard(idx);
+        cardsList.appendChild(cardTag);
+    });
+}
+
+function startTurn() {
+    clearTimeout(gameState.playerTimer);
+    
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    
+    if (currentPlayer.skipNextTurn) {
+        showMessage(`${currentPlayer.name} pierde su turno`);
+        currentPlayer.skipNextTurn = false;
+        setTimeout(() => endTurn(), 2000);
+        return;
+    }
+    
+    renderGame();
+    
+    if (currentPlayer.isHuman) {
+        startHumanTurn();
+    } else {
+        startBotTurn();
+    }
+}
+
+function startHumanTurn() {
+    const actionButtons = document.getElementById('actionButtons');
+    actionButtons.innerHTML = `
+        <button class="btn btn-pink" onclick="drawCard()">Recoger Carta Nueva</button>
+        <button class="btn btn-cyan" onclick="openShop()">Ir a La Tiendita</button>
+    `;
+    
+    gameState.playerTimer = setTimeout(() => {
+        showMessage('Perdiste tu turno por inactividad');
+        setTimeout(() => endTurn(), 2000);
+    }, 8000);
+}
+
+function drawCard() {
+    clearTimeout(gameState.playerTimer);
+    
+    if (gameState.deck.length === 0) {
+        gameState.deck = [];
+        for (let i = 0; i < 5; i++) {
+            gameState.deck.push('TRASH_1', 'TRASH_2', 'TRASH_3');
+        }
+        for (let i = 0; i < 3; i++) {
+            gameState.deck.push('STEAL', 'FISH', 'SWAP_TOKENS', 'SKIP_TURN');
+        }
+        for (let i = 0; i < 2; i++) {
+            gameState.deck.push('ROTATE_TRASH', 'REVERSE_ORDER');
+        }
+    }
+    
+    const randomIndex = Math.floor(Math.random() * gameState.deck.length);
+    const cardKey = gameState.deck[randomIndex];
+    gameState.deck.splice(randomIndex, 1);
+    gameState.currentCard = cardKey;
+    
+    const card = CARD_TYPES[cardKey];
+    showMessage(`Sacaste: ${card.name}`);
+    
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    const canStore = currentPlayer.storedCards.length < 5;
+    
+    const actionButtons = document.getElementById('actionButtons');
+    actionButtons.innerHTML = `
+        <button class="btn btn-pink" onclick="applyCurrentCard()">Aplicar Carta Nueva</button>
+        ${canStore ? '<button class="btn btn-yellow" onclick="storeCurrentCard()">Almacenar Carta Nueva</button>' : ''}
+        <button class="btn btn-cyan" onclick="endTurn()">Finalizar Turno</button>
+    `;
+}
+
+function applyCurrentCard() {
+    applyCard(gameState.currentCard, gameState.currentPlayerIndex);
+    gameState.currentCard = null;
+    
+    const actionButtons = document.getElementById('actionButtons');
+    actionButtons.innerHTML = `
+        <button class="btn btn-cyan" onclick="endTurn()">Finalizar Turno</button>
+    `;
+}
+
+function storeCurrentCard() {
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    currentPlayer.storedCards.push(gameState.currentCard);
+    
+    showMessage(`Carta almacenada: ${CARD_TYPES[gameState.currentCard].name}`);
+    gameState.currentCard = null;
+    
+    renderStoredCards();
+    
+    const actionButtons = document.getElementById('actionButtons');
+    actionButtons.innerHTML = `
+        <button class="btn btn-cyan" onclick="endTurn()">Finalizar Turno</button>
+    `;
+}
+
+function useStoredCard(cardIndex) {
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    const cardKey = currentPlayer.storedCards[cardIndex];
+    
+    currentPlayer.storedCards.splice(cardIndex, 1);
+    
+    applyCard(cardKey, gameState.currentPlayerIndex);
+    
+    renderStoredCards();
+    
+    setTimeout(() => endTurn(), 1500);
+}
+
+function applyCard(cardKey, playerIndex) {
+    const card = CARD_TYPES[cardKey];
+    const player = gameState.players[playerIndex];
+    
+    if (card.type === 'trash') {
+        player.trash += card.value;
+        showMessage(`${player.name} ganó ${card.value} basura`);
+        renderGame();
+    } else if (cardKey === 'STEAL') {
+        if (player.isHuman) {
+            selectPlayerForAction('steal', 'Selecciona a quién robar basura');
+        } else {
+            botStealTrash(playerIndex);
+        }
+    } else if (cardKey === 'FISH') {
+        if (player.isHuman) {
+            openFishModal();
+        } else {
+            botFish(playerIndex);
+        }
+    } else if (cardKey === 'SWAP_TOKENS') {
+        if (player.isHuman) {
+            selectPlayerForAction('swap', 'Selecciona rival para Intercambio de Ajolotes');
+        } else {
+            botSwapTokens(playerIndex);
+        }
+    } else if (cardKey === 'SKIP_TURN') {
+        if (player.isHuman) {
+            selectPlayerForAction('skip', 'Selecciona rival para Duelo de Perder Turno');
+        } else {
+            botSkipTurn(playerIndex);
+        }
+    } else if (cardKey === 'ROTATE_TRASH') {
+        rotateTrash();
+    } else if (cardKey === 'REVERSE_ORDER') {
+        reverseOrder();
+    }
+}
+
+function selectPlayerForAction(action, title) {
+    document.getElementById('selectModalTitle').textContent = title;
+    const buttonsDiv = document.getElementById('playerSelectButtons');
+    buttonsDiv.innerHTML = '';
+    
+    gameState.players.forEach((player, idx) => {
+        if (idx !== gameState.currentPlayerIndex) {
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-pink';
+            btn.style.width = '100%';
+            btn.style.margin = '10px 0';
+            btn.textContent = player.name;
+            btn.onclick = () => executePlayerAction(action, idx);
+            buttonsDiv.appendChild(btn);
+        }
+    });
+    
+    document.getElementById('playerSelectModal').classList.add('active');
+}
+
+function executePlayerAction(action, targetIndex) {
+    document.getElementById('playerSelectModal').classList.remove('active');
+    
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    const targetPlayer = gameState.players[targetIndex];
+    
+    if (action === 'steal') {
+        const dice = rollDice();
+        const stolen = Math.min(dice, targetPlayer.trash);
+        targetPlayer.trash -= stolen;
+        currentPlayer.trash += stolen;
+        
+        showDiceResult(`${currentPlayer.name} vs ${targetPlayer.name}`, dice, null, `¡Robaste ${stolen} basura!`);
+        renderGame();
+    } else if (action === 'swap') {
+        const dice1 = rollDice();
+        const dice2 = rollDice();
+        
+        if (dice1 > dice2 && targetPlayer.tokens.length > 0) {
+            const stolenToken = targetPlayer.tokens.pop();
+            currentPlayer.tokens.push(stolenToken);
+            currentPlayer.score += stolenToken.value;
+            targetPlayer.score -= stolenToken.value;
+            
+            showDiceResult(`${currentPlayer.name} (${dice1}) vs ${targetPlayer.name} (${dice2})`, dice1, dice2, `¡Ganaste! Robaste una ficha de ${stolenToken.value} puntos`);
+        } else {
+            showDiceResult(`${currentPlayer.name} (${dice1}) vs ${targetPlayer.name} (${dice2})`, dice1, dice2, 'No ganaste. Nada sucede.');
+        }
+        renderGame();
+    } else if (action === 'skip') {
+        const dice1 = rollDice();
+        const dice2 = rollDice();
+        
+        if (dice1 > dice2) {
+            targetPlayer.skipNextTurn = true;
+            showDiceResult(`${currentPlayer.name} (${dice1}) vs ${targetPlayer.name} (${dice2})`, dice1, dice2, `¡Ganaste! ${targetPlayer.name} pierde su próximo turno`);
+        } else {
+            currentPlayer.skipNextTurn = true;
+            showDiceResult(`${currentPlayer.name} (${dice1}) vs ${targetPlayer.name} (${dice2})`, dice1, dice2, `¡Perdiste! Perderás tu próximo turno`);
+        }
+    }
+}
+
+function rollDice() {
+    return Math.floor(Math.random() * 6) + 1;
+}
+
+function showDiceResult(title, dice1, dice2, message) {
+    document.getElementById('diceTitle').textContent = title;
+    const resultsDiv = document.getElementById('diceResults');
+    
+    if (dice2 !== null) {
+        resultsDiv.innerHTML = `
+            <div class="dice-animation">🎲 ${dice1} 🆚 ${dice2} 🎲</div>
+            <p style="text-align: center; font-size: 1.2em; margin-top: 20px;">${message}</p>
+        `;
+    } else {
+        resultsDiv.innerHTML = `
+            <div class="dice-animation">🎲 ${dice1} 🎲</div>
+            <p style="text-align: center; font-size: 1.2em; margin-top: 20px;">${message}</p>
+        `;
+    }
+    
+    document.getElementById('diceModal').classList.add('active');
+}
+
+function closeDiceModal() {
+    document.getElementById('diceModal').classList.remove('active');
+}
+
+function rotateTrash() {
+    const trashAmounts = gameState.players.map(p => p.trash);
+    
+    for (let i = 0; i < gameState.players.length; i++) {
+        const prevIndex = (i - 1 + gameState.players.length) % gameState.players.length;
+        gameState.players[i].trash = trashAmounts[prevIndex];
+    }
+    
+    showMessage('¡Rotación de basura! Todos intercambian basura');
+    renderGame();
+}
+
+function reverseOrder() {
+    gameState.turnOrder.reverse();
+    
+    const currentPos = gameState.turnOrder.indexOf(gameState.currentPlayerIndex);
+    
+    showMessage('¡Orden de turnos invertido!');
+    renderGame();
+}
+
+function openFishModal() {
+    const availableTokens = gameState.tokens.filter(t => !t.revealed);
+    
+    if (availableTokens.length === 0) {
+        showMessage('No hay fichas disponibles');
+        return;
+    }
+    
+    const fishGrid = document.getElementById('fishTokensGrid');
+    fishGrid.innerHTML = '';
+    
+    gameState.tokens.forEach((token, idx) => {
+        if (!token.revealed) {
+            const tokenDiv = document.createElement('div');
+            tokenDiv.className = 'token token-select';
+            tokenDiv.textContent = '?';
+            tokenDiv.onclick = () => selectTokenForFish(idx);
+            tokenDiv.dataset.index = idx;
+            fishGrid.appendChild(tokenDiv);
+        }
+    });
+    
+    document.getElementById('fishModal').classList.add('active');
+}
+
+function selectTokenForFish(index) {
+    document.querySelectorAll('.token-select').forEach(t => t.classList.remove('selected'));
+    const selected = document.querySelector(`.token-select[data-index="${index}"]`);
+    if (selected) {
+        selected.classList.add('selected');
+        gameState.selectedToken = index;
+    }
+}
+
+function confirmFish() {
+    if (gameState.selectedToken === null) {
+        alert('Por favor selecciona una ficha');
+        return;
+    }
+    
+    const token = gameState.tokens[gameState.selectedToken];
+    token.revealed = true;
+    
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    currentPlayer.tokens.push(token);
+    currentPlayer.score += token.value;
+    
+    document.getElementById('fishModal').classList.remove('active');
+    
+    showMessage(`¡Pescaste una ficha ${token.color}! +${token.value} puntos`);
+    
+    gameState.selectedToken = null;
+    renderGame();
+}
+
+function openShop() {
+    clearTimeout(gameState.playerTimer);
+    
+    const shopItems = document.getElementById('shopItems');
+    shopItems.innerHTML = '';
+    
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    
+    SHOP_ITEMS.forEach((item, idx) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'shop-item';
+        
+        const canBuy = currentPlayer.trash >= item.cost;
+        
+        itemDiv.innerHTML = `
+            <h4>${item.name}</h4>
+            <p><strong>Costo:</strong> ${item.cost} basura</p>
+            <p><strong>Puntos que adds:</strong> +${item.points}</p>
+            <button class="btn btn-pink" ${!canBuy ? 'disabled' : ''} onclick="buyItem(${idx})">
+                Comprar
+            </button>
+        `;
+        
+        shopItems.appendChild(itemDiv);
+    });
+    
+    document.getElementById('shopModal').classList.add('active');
+}
+
+function buyItem(itemIndex) {
+    const item = SHOP_ITEMS[itemIndex];
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    
+    if (currentPlayer.trash >= item.cost) {
+        currentPlayer.trash -= item.cost;
+        currentPlayer.score += item.points;
+        
+        document.getElementById('shopModal').classList.remove('active');
+        
+        showMessage(`¡Compraste ${item.name}! +${item.points} puntos`);
+        renderGame();
+        
+        setTimeout(() => endTurn(), 2000);
+    }
+}
+
+function closeShop() {
+    document.getElementById('shopModal').classList.remove('active');
+    endTurn();
+}
+
+function startBotTurn() {
+    const actionButtons = document.getElementById('actionButtons');
+    actionButtons.innerHTML = '<p style="text-align: center; font-size: 1.2em;">El bot está pensando...</p>';
+    
+    setTimeout(() => {
+        executeBotTurn();
+    }, 5000);
+}
+
+function executeBotTurn() {
+    const bot = gameState.players[gameState.currentPlayerIndex];
+    
+    const leader = getLeadingPlayer();
+    const isLoosing = bot.score < leader.score - 2;
+    
+    if (bot.storedCards.length === 5) {
+        const cardKey = bot.storedCards.pop();
+        applyCard(cardKey, gameState.currentPlayerIndex);
+        showMessage(`${bot.name} usó una carta almacenada`);
+    } else if (isLoosing && bot.trash >= 4 && Math.random() > 0.5) {
+        botBuyFromShop(gameState.currentPlayerIndex);
+    } else if (bot.storedCards.length > 0 && Math.random() > 0.6) {
+        const cardKey = bot.storedCards.pop();
+        applyCard(cardKey, gameState.currentPlayerIndex);
+        showMessage(`${bot.name} usó una carta almacenada`);
+    } else {
+        botDrawCard(gameState.currentPlayerIndex);
+    }
+    
+    setTimeout(() => {
+        showMessage(`${bot.name} ha completado su jugada`);
+        setTimeout(() => endTurn(), 1500);
+    }, 2000);
+}
+
+function botDrawCard(playerIndex) {
+    if (gameState.deck.length === 0) {
+        gameState.deck = [];
+        for (let i = 0; i < 5; i++) {
+            gameState.deck.push('TRASH_1', 'TRASH_2', 'TRASH_3');
+        }
+        for (let i = 0; i < 3; i++) {
+            gameState.deck.push('STEAL', 'FISH', 'SWAP_TOKENS', 'SKIP_TURN');
+        }
+        for (let i = 0; i < 2; i++) {
+            gameState.deck.push('ROTATE_TRASH', 'REVERSE_ORDER');
+        }
+    }
+    
+    const randomIndex = Math.floor(Math.random() * gameState.deck.length);
+    const cardKey = gameState.deck[randomIndex];
+    gameState.deck.splice(randomIndex, 1);
+    
+    const bot = gameState.players[playerIndex];
+    const card = CARD_TYPES[cardKey];
+    
+    const shouldApply = card.type === 'special' || card.type === 'challenge' || 
+                        card.type === 'event' || bot.storedCards.length >= 3;
+    
+    if (shouldApply) {
+        applyCard(cardKey, playerIndex);
+    } else {
+        bot.storedCards.push(cardKey);
+        showMessage(`${bot.name} almacenó una carta`);
+    }
+}
+
+function botStealTrash(playerIndex) {
+    const leader = getLeadingPlayer();
+    const leaderIndex = gameState.players.indexOf(leader);
+    
+    if (leaderIndex === playerIndex) {
+        const options = gameState.players.filter((p, i) => i !== playerIndex && p.trash > 0);
+        if (options.length > 0) {
+            const target = options[Math.floor(Math.random() * options.length)];
+            const targetIndex = gameState.players.indexOf(target);
+            executePlayerAction('steal', targetIndex);
+        }
+    } else {
+        executePlayerAction('steal', leaderIndex);
+    }
+}
+
+function botFish(playerIndex) {
+    const availableTokens = gameState.tokens
+        .map((t, i) => ({ token: t, index: i }))
+        .filter(item => !item.token.revealed);
+    
+    if (availableTokens.length === 0) return;
+    
+    const yellowTokens = availableTokens.filter(item => item.token.color === 'yellow');
+    const brownTokens = availableTokens.filter(item => item.token.color === 'brown');
+    
+    let selectedItem;
+    if (yellowTokens.length > 0) {
+        selectedItem = yellowTokens[Math.floor(Math.random() * yellowTokens.length)];
+    } else if (brownTokens.length > 0) {
+        selectedItem = brownTokens[Math.floor(Math.random() * brownTokens.length)];
+    } else {
+        selectedItem = availableTokens[Math.floor(Math.random() * availableTokens.length)];
+    }
+    
+    const token = selectedItem.token;
+    token.revealed = true;
+    
+    const bot = gameState.players[playerIndex];
+    bot.tokens.push(token);
+    bot.score += token.value;
+    
+    showMessage(`${bot.name} pescó una ficha ${token.color}! +${token.value} puntos`);
+    renderGame();
+}
+
+function botSwapTokens(playerIndex) {
+    const leader = getLeadingPlayer();
+    const leaderIndex = gameState.players.indexOf(leader);
+    
+    if (leaderIndex !== playerIndex) {
+        executePlayerAction('swap', leaderIndex);
+    } else {
+        const options = gameState.players.filter((p, i) => i !== playerIndex);
+        const target = options[Math.floor(Math.random() * options.length)];
+        const targetIndex = gameState.players.indexOf(target);
+        executePlayerAction('swap', targetIndex);
+    }
+}
+
+function botSkipTurn(playerIndex) {
+    const leader = getLeadingPlayer();
+    const leaderIndex = gameState.players.indexOf(leader);
+    
+    if (leaderIndex !== playerIndex) {
+        executePlayerAction('skip', leaderIndex);
+    } else {
+        const options = gameState.players.filter((p, i) => i !== playerIndex);
+        const target = options[Math.floor(Math.random() * options.length)];
+        const targetIndex = gameState.players.indexOf(target);
+        executePlayerAction('skip', targetIndex);
+    }
+}
+
+function botBuyFromShop(playerIndex) {
+    const bot = gameState.players[playerIndex];
+    
+    const affordableItems = SHOP_ITEMS
+        .map((item, idx) => ({ item, idx }))
+        .filter(x => bot.trash >= x.item.cost)
+        .sort((a, b) => b.item.points - a.item.points);
+    
+    if (affordableItems.length > 0) {
+        const selected = affordableItems[0];
+        bot.trash -= selected.item.cost;
+        bot.score += selected.item.points;
+        
+        showMessage(`${bot.name} compró ${selected.item.name}! +${selected.item.points} puntos`);
+        renderGame();
+    }
+}
+
+function getLeadingPlayer() {
+    return gameState.players.reduce((leader, player) => 
+        player.score > leader.score ? player : leader
+    );
+}
+
+function endTurn() {
+    clearTimeout(gameState.playerTimer);
+    
+    gameState.totalTurns++;
+    
+    if (checkGameEnd()) {
+        showRanking();
+        return;
+    }
+    
+    const currentTurnOrderIndex = gameState.turnOrder.indexOf(gameState.currentPlayerIndex);
+    const nextTurnOrderIndex = (currentTurnOrderIndex + 1) % gameState.turnOrder.length;
+    gameState.currentPlayerIndex = gameState.turnOrder[nextTurnOrderIndex];
+    
+    const actionButtons = document.getElementById('actionButtons');
+    actionButtons.innerHTML = '';
+    
+    startTurn();
+}
+
+function checkGameEnd() {
+    const revealedTokens = gameState.tokens.filter(t => t.revealed).length;
+    
+    if (revealedTokens >= 12) {
+        return true;
+    }
+    
+    if (gameState.totalTurns >= 30) {
+        return true;
+    }
+    
+    return false;
+}
+
+function showRanking() {
+    const sortedPlayers = [...gameState.players].sort((a, b) => b.score - a.score);
+    
+    const rankingList = document.getElementById('rankingList');
+    rankingList.innerHTML = '';
+    
+    sortedPlayers.forEach((player, idx) => {
+        const item = document.createElement('div');
+        item.className = `ranking-item ${idx === 0 ? 'first' : ''}`;
+        item.innerHTML = `${idx + 1}. ${player.name} — ${player.score.toFixed(1)} puntos`;
+        rankingList.appendChild(item);
+    });
+    
+    showScreen('rankingScreen');
+}
+
+function showMessage(msg) {
+    const msgBox = document.getElementById('messageBox');
+    msgBox.textContent = msg;
+    msgBox.style.display = 'block';
+    
+    setTimeout(() => {
+        msgBox.style.display = 'none';
+    }, 3000);
+}
+
+function showScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+}
+
+function showMenu() {
+    showScreen('menuScreen');
+}
+
+function startGame() {
+    initGame();
+    showScreen('gameScreen');
+}
+
+function showTutorial() {
+    showScreen('tutorialScreen');
+}
+
+function showCredits() {
+    showScreen('creditsScreen');
+}
+
+function exitGame() {
+    if (confirm('¿Estás seguro de que deseas salir?')) {
+        window.close();
+    }
+}
+
+function exitToMenu() {
+    if (confirm('¿Salir al menú? El juego actual se perderá.')) {
+        clearTimeout(gameState.playerTimer);
+        showMenu();
+    }
+}
+</script>
+
+</body>
+</html>
