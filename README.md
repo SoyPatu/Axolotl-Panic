@@ -62,6 +62,6 @@ __Chat con la IA: Perplexity__: - [Ver aquí](https://www.perplexity.ai/search/n
 
 __Prototipo por: Perplexity__: - [Ver aquí](https://RogelioAMERIKE.github.io/Axolotl-Panic-Rogelio/axolotl_perplexity.html)
 
-__Chat con la IA: Replit__: - [Ver aquí](https://replit.com/join/ljkeyllays-cdmx3073)
+__Chat con la IA:Replit__: - [Ver aquí](https://replit.com/join/ljkeyllays-cdmx3073)
 
-__Prototipo por: Replit__: - [Ver aquí](https://RogelioAMERIKE.github.io/Axolotl-Panic-Rogelio/axolotl_replit.html)
+__Prototipo por:Replit__: - [Ver aquí](https://RogelioAMERIKE.github.io/Axolotl-Panic-Rogelio/axolotl_replit.html)
