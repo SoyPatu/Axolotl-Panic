@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rescate de Ajolotes</title>
+    
+    <style>
+        /* ESTILOS CSS */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #e0f7fa; /* Fondo azul claro como agua */
+            color: #004d40;
+            margin: 0;
+            padding: 20px;
+        }
+
+        #game-container {
+            background-color: #ffffff;
+            border: 4px solid #009688;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #f44336; /* Color rojo de alerta */
+            margin-bottom: 20px;
+        }
+
+        #score-panel, #card-area {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #b2dfdb;
+            border-radius: 10px;
+            background-color: #f0fdfc;
+        }
+
+        button {
+            background-color: #009688; /* Verde/Azul del hábitat */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #00796b;
+        }
+
+        .ajolote-count {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #d81b60; /* Color ajolote rosa */
+        }
+        
+        .result-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #ffe0b2;
+            color: #e65100;
+            font-weight: bold;
+        }
+
+        #shop-buttons button {
+            background-color: #ffb300; /* Amarillo para la tienda */
+        }
+        
+        #shop-buttons button:hover {
+            background-color: #ffa000;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <h1>💖 Rescate de Ajolotes 💖</h1>
+        
+        <div id="score-panel">
+            <h2>Puntuación y Recursos</h2>
+            <p>Puntuación Final Proyectada: <span id="final-score">0</span> puntos</p>
+            <p>Basura Recolectada: <span id="trash-count">0</span> unidades</p>
+            <p>Bonus de Comida: <span id="food-bonus">0</span></p>
+            <div id="ajolote-counts">
+                <span class="ajolote-count">Ajolotes Rosados (x8): <span id="count-Rosado">0</span></span>
+                <span class="ajolote-count">Ajolotes Cafés (x6): <span id="count-Café">0</span></span>
+                <span class="ajolote-count">Ajolotes Amarillos (x4): <span id="count-Amarillo">0</span></span>
+            </div>
+        </div>
+
+        <div id="card-area">
+            <h2>Acción del Turno</h2>
+            <div id="message-display" class="result-message">¡Presiona "Tomar Turno" para empezar!</div>
+        </div>
+        
+        <div id="action-buttons">
+            <button id="take-turn-btn">Tomar Turno</button>
+            <button id="reset-game-btn" onclick="iniciarJuego()">Reiniciar Juego</button>
+        </div>
+
+        <div id="shop-buttons" style="display: none; margin-top: 20px;">
+            <h3>🛒 Tienda (Gasta Basura)</h3>
+            <button onclick="comprarComida(2)">Comprar Comida +1 (2 Basura)</button>
+            <button onclick="comprarComida(4)">Comprar Comida +2 (4 Basura)</button>
+            <button onclick="comprarComida(6)">Comprar Comida +3 (6 Basura)</button>
+            <button onclick="evaluarPescaAjolote()">Pescar Ajolote (5 Basura)</button>
+            <button onclick="pasarAlSiguienteTurno()">Terminar Turno</button>
+        </div>
+
+    </div>
+
+    <script>
+        // JAVASCRIPT - LÓGICA DEL JUEGO
+        
+        // --- 1. CONFIGURACIÓN DEL JUEGO Y ESTADO ---
+        
+        const AJOLOTE_VALUES = { "Rosado": 8, "Café": 6, "Amarillo": 4 };
+        const PESCA_COST = 5; // Costo en Basura para intentar Pescar un Ajolote
+        
+        let playerScore = 0;
+        let trashCount = 0;
+        let bonusFood = 0; 
+        let ajolotesObtenidos = { "Rosado": 0, "Café": 0, "Amarillo": 0 };
+
+        // Definición de Mazos
+        let ajolotesDeck = [];
+        let trashDeck = [];
+        let foodDeck = [];
+        const COMODINES = 17; // Como comodines tienen lógica especial y efecto inmediato, no los pondremos en el mazo.
+        
+        // --- 2. FUNCIONES DE UTILIDAD Y BARAAJE ---
+        
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function actualizarUI() {
+            // Actualiza los contadores en el panel
+            document.getElementById('trash-count').textContent = trashCount;
+            document.getElementById('food-bonus').textContent = bonusFood;
+            document.getElementById('count-Rosado').textContent = ajolotesObtenidos["Rosado"];
+            document.getElementById('count-Café').textContent = ajolotesObtenidos["Café"];
+            document.getElementById('count-Amarillo').textContent = ajolotesObtenidos["Amarillo"];
+
+            // Calcula la puntuación final (Ajolotes * Valor + Bonus de Comida)
+            let totalScore = 0;
+            totalScore += ajolotesObtenidos["Rosado"] * AJOLOTE_VALUES["Rosado"];
+            totalScore += ajolotesObtenidos["Café"] * AJOLOTE_VALUES["Café"];
+            totalScore += ajolotesObtenidos["Amarillo"] * AJOLOTE_VALUES["Amarillo"];
+            totalScore += bonusFood; 
+            document.getElementById('final-score').textContent = totalScore;
+        }
+
+        function setMessage(message, color = '#e65100', background = '#ffe0b2') {
+            const display = document.getElementById('message-display');
+            display.textContent = message;
+            display.style.backgroundColor = background;
+            display.style.color = color;
+        }
+
+        function toggleTurnButton(enable) {
+            document.getElementById('take-turn-btn').disabled = !enable;
+            document.getElementById('shop-buttons').style.display = enable ? 'none' : 'block';
+        }
+
+        // --- 3. LÓGICA DEL JUEGO ---
+
+        function iniciarJuego() {
+            // Reiniciar estado
+            trashCount = 0;
+            bonusFood = 0;
+            ajolotesObtenidos = { "Rosado": 0, "Café": 0, "Amarillo": 0 };
+            
+            // Recrear y barajar mazos
+            ajolotesDeck = [ ...Array(8).fill("Rosado"), ...Array(6).fill("Café"), ...Array(4).fill("Amarillo") ];
+            shuffleArray(ajolotesDeck);
+            
+            trashDeck = [ ...Array(10).fill(1), ...Array(5).fill(2), ...Array(2).fill(3) ]; // Basura +1, +2, +3
+            shuffleArray(trashDeck);
+            
+            foodDeck = [ ...Array(6).fill(1), ...Array(4).fill(2), ...Array(2).fill(3) ]; // Comida +1, +2, +3
+            shuffleArray(foodDeck);
+
+            actualizarUI();
+            setMessage("Juego Reiniciado. ¡Toma tu primer turno!", '#004d40', '#ccff90');
+            toggleTurnButton(true);
+        }
+
+        function sacarCartaBasura() {
+            if (trashDeck.length === 0) {
+                trashDeck = [ ...Array(10).fill(1), ...Array(5).fill(2), ...Array(2).fill(3) ]; 
+                shuffleArray(trashDeck);
+                setMessage("¡Se mezcló el mazo de Basura!", '#4a148c', '#e1bee7');
+            }
+            return trashDeck.pop();
+        }
+
+        function sacarCartaComida() {
+            if (foodDeck.length === 0) {
+                foodDeck = [ ...Array(6).fill(1), ...Array(4).fill(2), ...Array(2).fill(3) ];
+                shuffleArray(foodDeck);
+            }
+            return foodDeck.pop();
+        }
+
+        function sacarFichaAjolote() {
+            if (ajolotesDeck.length === 0) {
+                setMessage("¡No quedan más Ajolotes para rescatar! El juego termina.", '#d50000', '#ffcdd2');
+                toggleTurnButton(false);
+                return null;
+            }
+            return ajolotesDeck.pop();
+        }
+
+        function manejarComodin() {
+            // Simplificado: un comodín da un pequeño bonus aleatorio.
+            const comodinType = Math.floor(Math.random() * 3);
+            let message = "";
+            if (comodinType === 0) {
+                trashCount += 3;
+                message = "✨ Comodín: ¡Encuentras 3 unidades extra de basura!";
+            } else if (comodinType === 1) {
+                const ajolote = sacarFichaAjolote();
+                if (ajolote) {
+                    ajolotesObtenidos[ajolote]++;
+                    message = `✨ Comodín: ¡Rescatas un Ajolote ${ajolote}!`;
+                }
+            } else {
+                bonusFood += 1;
+                message = "✨ Comodín: ¡Consigues un punto extra de comida!";
+            }
+            setMessage(message, '#303f9f', '#c5cae9');
+        }
+
+        function tomarTurno() {
+            // 1. Tomar una "carta" que puede ser Basura, Comodín o Ajolote
+            const randomNumber = Math.random();
+            let tipoCarta;
+            
+            // Proporciones simplificadas (ajustar según el mazo original)
+            if (randomNumber < 0.6) { // 60% chance de Basura
+                tipoCarta = 'Basura';
+            } else if (randomNumber < 0.8) { // 20% chance de Comodín
+                tipoCarta = 'Comodín';
+            } else { // 20% chance de Ajolote Directo
+                tipoCarta = 'Ajolote';
+            }
+
+            switch (tipoCarta) {
+                case 'Comodín':
+                    manejarComodin();
+                    break;
+                case 'Basura':
+                    const valorBasura = sacarCartaBasura();
+                    trashCount += valorBasura;
+                    setMessage(`🗑️ Recolectas Basura: +${valorBasura} unidades.`);
+                    break;
+                case 'Ajolote':
+                    const ajolote = sacarFichaAjolote();
+                    if (ajolote) {
+                        ajolotesObtenidos[ajolote]++;
+                        setMessage(`💖 ¡Rescate Directo! Has encontrado un Ajolote ${ajolote}.`, '#d81b60', '#f8bbd0');
+                    }
+                    break;
+            }
+            
+            actualizarUI();
+            toggleTurnButton(false); // Deshabilita el botón de turno para ir a la Tienda
+        }
+
+        function comprarComida(costo) {
+            if (trashCount >= costo) {
+                trashCount -= costo;
+                const valorComida = sacarCartaComida();
+                bonusFood += valorComida;
+                setMessage(`🛒 Compraste Comida +${valorComida}. Te costó ${costo} de basura.`, '#ffb300', '#fff9c4');
+            } else {
+                setMessage(`❌ No tienes suficiente basura (${costo} necesarios) para esta compra.`, '#d50000', '#ffcdd2');
+            }
+            actualizarUI();
+        }
+
+        function evaluarPescaAjolote() {
+            if (trashCount >= PESCA_COST) {
+                trashCount -= PESCA_COST;
+                const ajolote = sacarFichaAjolote();
+                if (ajolote) {
+                    ajolotesObtenidos[ajolote]++;
+                    setMessage(`🎣 ¡Pesca Exitosa! Gastaste ${PESCA_COST} de basura y rescataste un Ajolote ${ajolote}.`, '#4caf50', '#c8e6c9');
+                } else {
+                    setMessage(`🎣 Intento fallido. El estanque está vacío.`, '#757575', '#f5f5f5');
+                }
+            } else {
+                setMessage(`❌ Necesitas ${PESCA_COST} de Basura para Pescar. Solo tienes ${trashCount}.`, '#d50000', '#ffcdd2');
+            }
+            actualizarUI();
+        }
+
+        function pasarAlSiguienteTurno() {
+            setMessage("Fin del turno. ¡Toma tu siguiente acción!", '#004d40', '#ccff90');
+            toggleTurnButton(true);
+        }
+
+        // --- 4. ASIGNACIÓN DE EVENTOS Y INICIO ---
+
+        document.getElementById('take-turn-btn').addEventListener('click', tomarTurno);
+
+        // Iniciar el juego al cargar
+        window.onload = iniciarJuego;
+
+    </script>
+</body>
+</html>
