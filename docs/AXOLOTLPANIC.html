@@ -1,887 +1,1109 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AXOLOTL PANIC - DELUXE EDITION</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400;700&display=swap');
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Fredoka One', cursive;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AXOLOTL PANIC - DELUXE EDITION</title>
+  <style>
+    :root {
+      --pink: #ee4cb7;
+      --cyan: #6be5f6;
+      --yellow: #f9f86a;
+      --purple: #d8b4ff;
+      --light-pink: #ffe4f5;
+      --light-purple: #e6d6ff;
+      --light-yellow: #fff9c4;
+      --gray: #bbb;
+      --dark-gray: #777;
+      --blue: #4fc3f7;
+    }
 
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333;
-            overflow-x: hidden;
-            transition: all 0.5s ease;
-        }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+    }
 
-        /* MENÚ PRINCIPAL */
-        #menu {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(45deg, #ee4cb7, #6be5f6);
-            z-index: 1000;
-        }
+    body {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
 
-        #menu h1 {
-            font-size: clamp(3rem, 8vw, 8rem);
-            background: linear-gradient(45deg, #f9f86a, #ee4cb7, #6be5f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 3rem;
-            text-shadow: 0 0 30px rgba(255,255,255,0.5);
-            animation: glow 2s ease-in-out infinite alternate;
-        }
+    .screen {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
+    }
 
-        @keyframes glow {
-            from { filter: drop-shadow(0 0 20px #ee4cb7); }
-            to { filter: drop-shadow(0 0 30px #6be5f6); }
-        }
+    .screen.active {
+      opacity: 1;
+      pointer-events: all;
+    }
 
-        .btn-menu {
-            width: 300px;
-            max-width: 90vw;
-            padding: 1.5rem 2rem;
-            margin: 1rem;
-            font-size: clamp(1.2rem, 4vw, 2rem);
-            background: linear-gradient(45deg, #f9f86a, #ee4cb7);
-            color: #333;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-            transition: all 0.3s ease;
-        }
+    h1 {
+      font-size: 3.5rem;
+      color: var(--pink);
+      text-shadow: 0 0 10px var(--cyan);
+      margin-bottom: 2rem;
+      animation: pulse 2s infinite;
+    }
 
-        .btn-menu:hover {
-            transform: translateY(-10px) scale(1.05);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
-        }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
 
-        /* PANTALLAS MODAL */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0,0,0,0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-        }
+    button {
+      background: var(--cyan);
+      color: #000;
+      border: none;
+      padding: 1rem 2rem;
+      margin: 0.8rem;
+      font-size: 1.4rem;
+      border-radius: 15px;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #0095c7;
+      transition: all 0.2s;
+      min-width: 220px;
+    }
 
-        .modal-content {
-            background: linear-gradient(135deg, #f9f86a, #ee4cb7);
-            padding: 3rem;
-            border-radius: 30px;
-            max-width: 90vw;
-            max-height: 90vh;
-            overflow-y: auto;
-            text-align: center;
-        }
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 0 #0095c7;
+    }
 
-        .close-modal {
-            position: absolute;
-            top: 1rem;
-            right: 2rem;
-            font-size: 3rem;
-            cursor: pointer;
-            color: #333;
-        }
+    button:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 #0095c7;
+    }
 
-        /* PANTALLA DE JUEGO */
-        #game {
-            display: none;
-            min-height: 100vh;
-            padding: 2rem;
-        }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: 0 6px 0 #666;
+    }
 
-        /* JUGADORES */
-        .jugadores {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
+    .btn-pink { background: var(--pink); box-shadow: 0 6px 0 #c2185b; }
+    .btn-yellow { background: var(--yellow); color: #000; box-shadow: 0 6px 0 #f9a825; }
+    .btn-purple { background: var(--purple); box-shadow: 0 6px 0 #9c27b0; }
 
-        .jugador-box {
-            background: linear-gradient(135deg, #f0f8ff, #e6f3ff);
-            border: 4px solid transparent;
-            border-radius: 20px;
-            padding: 1.5rem;
-            min-width: 200px;
-            flex: 1;
-            max-width: 250px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-        }
+    /* MENU */
+    #menu-screen button {
+      font-size: 1.6rem;
+      padding: 1.2rem 2.5rem;
+    }
 
-        .jugador-tu { background: linear-gradient(135deg, #ffebee, #ffcdd2); }
-        .jugador-bot { background: linear-gradient(135deg, #e1bee7, #ce93d8); }
+    /* GAMEPLAY */
+    #game-screen {
+      padding: 1rem;
+      justify-content: flex-start;
+      overflow-y: auto;
+    }
 
-        .jugador-activo {
-            border-color: #ee4cb7 !important;
-            box-shadow: 0 0 30px #ee4cb7 !important;
-            transform: scale(1.1);
-        }
+    .exit-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: #ff4444;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+      box-shadow: 0 4px 0 #c00;
+    }
 
-        .jugador-nombre { 
-            font-size: 1.8rem; 
-            font-weight: bold; 
-            margin-bottom: 1rem;
-            color: #ee4cb7;
-        }
+    .players-info {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
 
-        .jugador-stat {
-            font-size: 1.1rem;
-            margin: 0.5rem 0;
-            color: #555;
-        }
+    .player-box {
+      background: var(--light-purple);
+      padding: 1rem;
+      border-radius: 15px;
+      width: 22%;
+      min-width: 180px;
+      text-align: center;
+      border: 4px solid transparent;
+      transition: all 0.3s;
+    }
 
-        /* INDICADOR DE TURNO */
-        .turno-indicator {
-            font-size: clamp(2rem, 6vw, 4rem);
-            margin: 2rem 0;
-            padding: 1.5rem;
-            background: linear-gradient(135deg, #6be5f6, #4fc3f7);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-        }
+    .player-box.human { background: var(--light-pink); }
+    .player-box.active { border: 4px solid var(--pink); transform: scale(1.05); }
 
-        .nombre-turno { color: #e3f2fd; text-shadow: 0 0 10px #bbdefb; }
+    .player-box h3 { color: var(--blue); margin-bottom: 0.5rem; }
+    .player-box p { margin: 0.3rem 0; font-size: 0.9rem; }
 
-        /* BOTONES DE ACCIÓN */
-        .acciones {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1rem;
-            margin: 2rem 0;
-        }
+    .turn-indicator {
+      font-size: 2rem;
+      color: var(--cyan);
+      margin: 1rem 0;
+      text-shadow: 0 0 8px var(--blue);
+    }
 
-        .btn-accion {
-            padding: 1rem 2rem;
-            font-size: 1.3rem;
-            background: linear-gradient(45deg, #ee4cb7, #f9f86a);
-            color: #333;
-            border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-            min-width: 200px;
-        }
+    .turn-indicator span {
+      color: var(--blue);
+      font-weight: bold;
+    }
 
-        .btn-accion:hover:not(:disabled) {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        }
+    .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
 
-        .btn-accion:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
+    .stored-cards {
+      background: var(--light-yellow);
+      padding: 1rem;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 800px;
+      margin: 1rem auto;
+      min-height: 80px;
+    }
 
-        /* CARTAS ALMACENADAS */
-        .cartas-almacenadas {
-            background: linear-gradient(135deg, #fff9c4, #fff176);
-            border-radius: 20px;
-            padding: 2rem;
-            margin: 2rem 0;
-            min-height: 120px;
-        }
+    .stored-cards h3 {
+      color: #000;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
 
-        .cartas-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
+    .card-tag {
+      display: inline-block;
+      background: var(--cyan);
+      color: #000;
+      padding: 0.5rem 1rem;
+      margin: 0.3rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      box-shadow: 0 3px 0 #0095c7;
+      transition: all 0.2s;
+    }
 
-        .carta-almacenada {
-            padding: 1rem 1.5rem;
-            background: linear-gradient(45deg, #6be5f6, #ee4cb7);
-            color: #333;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-            white-space: nowrap;
-        }
+    .card-tag:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 #0095c7;
+    }
 
-        .carta-almacenada:hover {
-            transform: scale(1.1) translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-        }
+    .tokens-area {
+      margin: 1.5rem 0;
+      text-align: center;
+    }
 
-        /* FICHAS */
-        .fichas-container {
-            margin: 2rem 0;
-        }
+    .tokens-area h3 {
+      margin-bottom: 0.8rem;
+      color: var(--yellow);
+    }
 
-        .fichas-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1rem;
-            max-width: 800px;
-            margin: 0 auto;
-        }
+    .tokens {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
 
-        .ficha {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 5px solid #ddd;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
+    .token {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--gray);
+      border: 3px solid var(--dark-gray);
+      transition: all 0.3s;
+    }
 
-        .ficha-gris { background: #ccc; }
-        .ficha-rosa { background: #ffc1cc; border-color: #ff69b4; }
-        .ficha-cafe { background: #d7ccc8; border-color: #8b4513; }
-        .ficha-amarilla { background: #fff9c4; border-color: #f9f86a; color: #333; }
+    .token.revealed.pink { background: var(--pink); border-color: #c2185b; }
+    .token.revealed.brown { background: #8d6e63; border-color: #5d4037; }
+    .token.revealed.yellow { background: var(--yellow); border-color: #f9a825; }
 
-        .ficha:hover:not(.revelada) {
-            transform: scale(1.2);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        }
+    .token.removed {
+      opacity: 0;
+      transform: scale(0);
+    }
 
-        .ficha.seleccionada {
-            border-color: #6be5f6 !important;
-            box-shadow: 0 0 20px #6be5f6;
-            transform: scale(1.3);
-        }
+    .message {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0,0,0,0.9);
+      color: white;
+      padding: 1.5rem 2.5rem;
+      border-radius: 20px;
+      font-size: 1.4rem;
+      text-align: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s;
+      border: 3px solid var(--cyan);
+      box-shadow: 0 0 20px var(--cyan);
+    }
 
-        /* TIENDA */
-        #tienda .tienda-item {
-            background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
-            padding: 1.5rem;
-            margin: 1rem;
-            border-radius: 20px;
-            text-align: center;
-        }
+    .message.show {
+      opacity: 1;
+      pointer-events: all;
+    }
 
-        .btn-comprar {
-            background: linear-gradient(45deg, #4caf50, #81c784);
-            color: white;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 25px;
-            cursor: pointer;
-            margin-top: 0.5rem;
-        }
+    /* MODALS */
+    .modal {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s;
+    }
 
-        .btn-comprar:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
+    .modal.active {
+      opacity: 1;
+      pointer-events: all;
+    }
 
-        /* FIN DEL JUEGO */
-        #fin {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0,0,0,0.9);
-            justify-content: center;
-            align-items: center;
-            z-index: 3000;
-            flex-direction: column;
-        }
+    .modal-content {
+      background: white;
+      color: #000;
+      padding: 2rem;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 0 30px var(--cyan);
+      border: 4px solid var(--pink);
+    }
 
-        .ranking {
-            background: linear-gradient(135deg, #f9f86a, #ee4cb7);
-            padding: 3rem;
-            border-radius: 30px;
-            max-width: 600px;
-            text-align: center;
-        }
+    .modal h2 {
+      text-align: center;
+      color: var(--pink);
+      margin-bottom: 1rem;
+    }
 
-        .ranking-item {
-            font-size: 2rem;
-            margin: 1rem 0;
-            padding: 1rem;
-            background: rgba(255,255,255,0.3);
-            border-radius: 15px;
-        }
+    .shop-item, .fish-token {
+      background: #f0f0f0;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-        .ganador {
-            font-size: 3.5rem !important;
-            background: linear-gradient(45deg, #ffd700, #ffed4e);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: none;
-        }
+    .fish-token {
+      cursor: pointer;
+      transition: all 0.2s;
+    }
 
-        /* BOTÓN SALIR */
-        #salir-juego {
-            position: fixed;
-            top: 2rem;
-            right: 2rem;
-            z-index: 100;
-        }
+    .fish-token.selected {
+      border: 3px solid var(--blue);
+      background: var(--light-yellow);
+    }
 
-        /* TIMER */
-        .timer {
-            position: fixed;
-            top: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(45deg, #ee4cb7, #f9f86a);
-            color: #333;
-            padding: 1rem 2rem;
-            border-radius: 30px;
-            font-size: 1.5rem;
-            font-weight: bold;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            z-index: 100;
-        }
+    .modal-actions {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
 
-        .timer-critico { animation: pulse-red 0.5s infinite; }
+    /* RANKING */
+    #ranking-screen {
+      text-align: center;
+    }
 
-        @keyframes pulse-red {
-            0%, 100% { background: #ff6b6b; }
-            50% { background: #ee4cb7; }
-        }
+    .ranking-list {
+      margin: 2rem 0;
+      font-size: 1.5rem;
+    }
 
-        /* RESPONSIVE */
-        @media (max-width: 768px) {
-            .jugadores { flex-direction: column; align-items: center; }
-            .acciones { flex-direction: column; align-items: center; }
-            .fichas-grid { gap: 0.5rem; }
-            .ficha { width: 60px; height: 60px; }
-        }
-    </style>
+    .ranking-list div {
+      background: rgba(255,255,255,0.1);
+      margin: 0.8rem auto;
+      padding: 1rem;
+      border-radius: 15px;
+      width: 70%;
+      max-width: 500px;
+    }
+
+    .winner {
+      color: var(--yellow) !important;
+      font-size: 1.8rem !important;
+      animation: pulse 1.5s infinite;
+    }
+
+    /* TUTORIAL & CREDITS */
+    .text-content {
+      background: rgba(255,255,255,0.1);
+      padding: 2rem;
+      border-radius: 15px;
+      margin: 1rem;
+      max-width: 800px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      h1 { font-size: 2.5rem; }
+      .player-box { width: 45%; margin: 0.5rem; }
+      .players-info { justify-content: center; }
+      button { font-size: 1.2rem; padding: 0.8rem 1.5rem; }
+    }
+  </style>
 </head>
 <body>
+  <!-- MENU SCREEN -->
+  <div id="menu-screen" class="screen active">
+    <h1>AXOLOTL PANIC<br>DELUXE EDITION</h1>
+    <button id="play-btn" class="btn-pink">JUGAR</button>
+    <button id="tutorial-btn" class="btn-cyan">TUTORIAL</button>
+    <button id="credits-btn" class="btn-yellow">CRÉDITOS</button>
+    <button id="exit-btn-menu" class="btn-purple">SALIR</button>
+  </div>
 
-    <!-- MENÚ PRINCIPAL -->
-    <div id="menu">
-        <h1>🦎 AXOLOTL PANIC<br>DELUXE EDITION 🦎</h1>
-        <button class="btn-menu" onclick="iniciarJuego()">JUGAR</button>
-        <button class="btn-menu" onclick="mostrarTutorial()">TUTORIAL</button>
-        <button class="btn-menu" onclick="mostrarCreditos()">CRÉDITOS</button>
-        <button class="btn-menu" onclick="salirJuego()">SALIR</button>
+  <!-- TUTORIAL SCREEN -->
+  <div id="tutorial-screen" class="screen">
+    <h1>TUTORIAL</h1>
+    <div class="text-content" id="tutorial-text">
+      <p><strong>¡Bienvenido a AXOLOTL PANIC!</strong></p>
+      <p>Tu objetivo es ganar la mayor cantidad de <strong>puntos</strong> pescando fichas de ajolotes y comprando objetos en <strong>La Tiendita</strong>.</p>
+      <p>Cada turno puedes:</p>
+      <ul>
+        <li><strong>Recoger una carta</strong> y aplicarla o almacenarla (máx 5).</li>
+        <li><strong>Usar una carta almacenada</strong> haciendo clic en ella.</li>
+        <li><strong>Ir a La Tiendita</strong> para gastar basura en puntos.</li>
+      </ul>
+      <p>Las cartas te dan basura, roban a rivales, pescan fichas o activan eventos.</p>
+      <p>¡Tienes 8 segundos por turno! Si no actúas, pierdes el turno.</p>
+      <p>El juego termina tras 30 turnos o cuando se acaben las 12 fichas.</p>
+      <p><strong>¡Diviértete y sé estratégico!</strong></p>
     </div>
+    <button id="back-tutorial" class="btn-pink">VOLVER</button>
+  </div>
 
-    <!-- MODALES -->
-    <div id="tutorial" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="cerrarModal('tutorial')">&times;</span>
-            <h2>🎮 TUTORIAL</h2>
-            <p><strong>Objetivo:</strong> ¡Ser el jugador con más puntos salvando ajolotes!</p>
-            <p><strong>Recoge cartas, gana basura, compra en la tiendita y pesca fichas de ajolotes.</strong></p>
-            <p><strong>¡Gana quien tenga más puntos al final!</strong></p>
-        </div>
+  <!-- CREDITS SCREEN -->
+  <div id="credits-screen" class="screen">
+    <h1>CRÉDITOS</h1>
+    <div class="text-content" id="credits-text">
+      <p><strong>Desarrollado por:</strong> Equipo Axolotl Panic</p>
+      <p><strong>Diseño y Programación:</strong> Grok 4 (xAI)</p>
+      <p><strong>Arte Conceptual:</strong> Inspirado en ajolotes adorables</p>
+      <p><strong>Música y SFX:</strong> Silencio ambiental (¡es un juego web!)</p>
+      <p><strong>Agradecimientos:</strong> A todos los ajolotes del mundo</p>
+      <p>© 2025 AXOLOTL PANIC DELUXE EDITION - Todos los derechos reservados</p>
     </div>
+    <button id="back-credits" class="btn-pink">VOLVER</button>
+  </div>
 
-    <div id="creditos" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="cerrarModal('creditos')">&times;</span>
-            <h2>👥 CRÉDITOS</h2>
-            <p><strong>Desarrollado por:</strong><br>Equipo Axolotl Panic</p>
-            <p><strong>Para salvar a los ajolotes</strong><br>🦎💖</p>
-        </div>
+  <!-- GAME SCREEN -->
+  <div id="game-screen" class="screen">
+    <button class="exit-btn" id="exit-to-menu">Salir al Menú</button>
+    
+    <div class="players-info" id="players-info"></div>
+    
+    <div class="turn-indicator" id="turn-indicator">Turno de: <span id="current-player-name">Tu</span></div>
+    
+    <div class="action-buttons" id="action-buttons"></div>
+    
+    <div class="stored-cards" id="stored-cards-area">
+      <h3>Cartas Almacenadas (Haz clic para usar):</h3>
+      <div id="stored-cards-list"></div>
     </div>
-
-    <!-- PANTALLA DE JUEGO -->
-    <div id="game">
-        <div class="timer" id="timer">8s ⏳</div>
-        <button id="salir-juego" class="btn-accion" onclick="salirAJuego()">🏠 Salir al Menú</button>
-
-        <div class="jugadores" id="jugadores"></div>
-
-        <div class="turno-indicator" id="turno-indicator">¡Prepárate!</div>
-
-        <div class="acciones" id="acciones"></div>
-
-        <div class="cartas-almacenadas" id="cartas-almacenadas">
-            <h3>📜 Cartas Almacenadas (Haz clic para usar):</h3>
-            <div class="cartas-grid" id="cartas-grid"></div>
-        </div>
-
-        <div class="fichas-container">
-            <h3>🦎 Fichas de Ajolotes</h3>
-            <div class="fichas-grid" id="fichas-grid"></div>
-        </div>
+    
+    <div class="tokens-area">
+      <h3>Fichas de Ajolotes</h3>
+      <div class="tokens" id="tokens"></div>
     </div>
+  </div>
 
-    <!-- MODAL TIENDA -->
-    <div id="tienda" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="cerrarTienda()">&times;</span>
-            <h2>🛒 LA TIENDITA</h2>
-            <div id="tienda-items"></div>
-            <button class="btn-accion" onclick="cerrarTienda()">Salir</button>
-        </div>
+  <!-- RANKING SCREEN -->
+  <div id="ranking-screen" class="screen">
+    <h1>¡JUEGO TERMINADO!</h1>
+    <div class="ranking-list" id="ranking-list"></div>
+    <button id="back-to-menu" class="btn-pink">Volver al Menú</button>
+  </div>
+
+  <!-- MODALS -->
+  <div id="shop-modal" class="modal">
+    <div class="modal-content">
+      <h2>🛍️ La Tiendita</h2>
+      <div id="shop-items"></div>
+      <div class="modal-actions">
+        <button id="close-shop" class="btn-pink">Salir</button>
+      </div>
     </div>
+  </div>
 
-    <!-- MODAL PESCAR -->
-    <div id="pescar-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="cerrarPesca()">&times;</span>
-            <h2>🎣 ¡HORA DE PESCAR!</h2>
-            <p>Elige una ficha:</p>
-            <div id="pescar-fichas" class="fichas-grid"></div>
-            <button class="btn-accion" id="aceptar-pesca" onclick="confirmarPesca()" disabled>Aceptar</button>
-        </div>
+  <div id="fish-modal" class="modal">
+    <div class="modal-content">
+      <h2>🎣 Hora de Pescar</h2>
+      <p>Elige una ficha para revelar su valor:</p>
+      <div id="fish-tokens"></div>
+      <div class="modal-actions">
+        <button id="confirm-fish" class="btn-cyan" disabled>Aceptar</button>
+        <button id="cancel-fish" class="btn-purple">Cancelar</button>
+      </div>
     </div>
+  </div>
 
-    <!-- FIN DEL JUEGO -->
-    <div id="fin">
-        <div class="ranking">
-            <h2 id="titulo-fin">¡JUEGO TERMINADO!</h2>
-            <div id="ranking-list"></div>
-            <button class="btn-menu" onclick="reiniciarJuego()">Volver al Menú</button>
-        </div>
+  <div id="target-modal" class="modal">
+    <div class="modal-content">
+      <h2 id="target-title">Elige un rival:</h2>
+      <div id="target-players"></div>
+      <div class="modal-actions">
+        <button id="cancel-target" class="btn-purple">Cancelar</button>
+      </div>
     </div>
+  </div>
 
-    <script>
-        // ESTADO DEL JUEGO
-        let juego = {
-            jugadores: ['Tú', 'Bot 1', 'Bot 2', 'Bot 3'],
-            datos: [
-                {basura: 0, puntos: 0, fichas: [], cartas: [], turnoPerdido: false},
-                {basura: 0, puntos: 0, fichas: [], cartas: [], turnoPerdido: false},
-                {basura: 0, puntos: 0, fichas: [], cartas: [], turnoPerdido: false},
-                {basura: 0, puntos: 0, fichas: [], cartas: [], turnoPerdido: false}
-            ],
-            turnoActual: 0,
-            direccionTurno: 1,
-            turnosTotales: 0,
-            fichasDisponibles: [],
-            mazo: [],
-            cartaActual: null,
-            timerInterval: null,
-            tiempoRestante: 8,
-            juegoTerminado: false
+  <!-- MESSAGE -->
+  <div id="game-message" class="message"></div>
+
+  <script>
+    // === ESTADO DEL JUEGO ===
+    const state = {
+      currentScreen: 'menu',
+      players: [
+        { name: 'Tu', isHuman: true, trash: 0, score: 0, tokens: [], cards: [], skippedTurn: false },
+        { name: 'Bot 1', isHuman: false, trash: 0, score: 0, tokens: [], cards: [], skippedTurn: false },
+        { name: 'Bot 2', isHuman: false, trash: 0, score: 0, tokens: [], cards: [], skippedTurn: false },
+        { name: 'Bot 3', isHuman: false, trash: 0, score: 0, tokens: [], cards: [], skippedTurn: false }
+      ],
+      currentPlayerIndex: 0,
+      turnCount: 0,
+      maxTurns: 30,
+      deck: [],
+      tokens: Array(12).fill().map((_, i) => ({
+        id: i,
+        value: i < 4 ? 0.5 : i < 8 ? 1 : 1.5,
+        color: i < 4 ? 'pink' : i < 8 ? 'brown' : 'yellow',
+        revealed: false,
+        owner: null
+      })),
+      newCard: null,
+      turnTimer: null,
+      botTimer: null,
+      reverseTurn: false
+    };
+
+    // === CARTAS ===
+    const cardTypes = [
+      { name: 'Basura +1', type: 'trash', value: 1 },
+      { name: 'Basura +2', type: 'trash', value: 2 },
+      { name: 'Basura +3', type: 'trash', value: 3 },
+      { name: 'Robo-Basura', type: 'steal' },
+      { name: 'Hora de Pescar', type: 'fish' },
+      { name: 'Intercambio de Ajolotes', type: 'swap' },
+      { name: 'Duelo de Perder Turno', type: 'skip' },
+      { name: 'Rotación de Basura', type: 'rotate' },
+      { name: 'Cambio de Rotación de Turnos', type: 'reverse' }
+    ];
+
+    function createDeck() {
+      const deck = [];
+      // 6 de cada basura
+      for (let i = 0; i < 6; i++) {
+        deck.push({ ...cardTypes[0] });
+        deck.push({ ...cardTypes[1] });
+        deck.push({ ...cardTypes[2] });
+      }
+      // 3 de cada especial
+      for (let i = 3; i < cardTypes.length; i++) {
+        for (let j = 0; j < 3; j++) {
+          deck.push({ ...cardTypes[i] });
+        }
+      }
+      return shuffle(deck);
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    // === TIENDA ===
+    const shopItems = [
+      { name: 'Alguita Limpia', cost: 2, points: 1 },
+      { name: 'Red Salvavidas', cost: 5, points: 2 },
+      { name: 'Tanque de Oxígeno', cost: 10, points: 4 }
+    ];
+
+    // === NAVEGACIÓN ENTRE PANTALLAS ===
+    const screens = {
+      menu: document.getElementById('menu-screen'),
+      tutorial: document.getElementById('tutorial-screen'),
+      credits: document.getElementById('credits-screen'),
+      game: document.getElementById('game-screen'),
+      ranking: document.getElementById('ranking-screen')
+    };
+
+    function showScreen(id) {
+      Object.values(screens).forEach(s => s.classList.remove('active'));
+      screens[id].classList.add('active');
+      state.currentScreen = id;
+    }
+
+    // === EVENTOS DEL MENÚ ===
+    document.getElementById('play-btn').onclick = () => startGame();
+    document.getElementById('tutorial-btn').onclick = () => showScreen('tutorial');
+    document.getElementById('credits-btn').onclick = () => showScreen('credits');
+    document.getElementById('exit-btn-menu').onclick = () => {
+      if (confirm('¿Seguro que quieres salir?')) window.close();
+    };
+    document.getElementById('back-tutorial').onclick = () => showScreen('menu');
+    document.getElementById('back-credits').onclick = () => showScreen('menu');
+    document.getElementById('exit-to-menu').onclick = () => {
+      if (confirm('¿Volver al menú? Se perderá la partida.')) {
+        showScreen('menu');
+        resetGame();
+      }
+    };
+    document.getElementById('back-to-menu').onclick = () => {
+      showScreen('menu');
+      resetGame();
+    };
+
+    // === INICIO DEL JUEGO ===
+    function startGame() {
+      resetGame();
+      state.deck = createDeck();
+      showScreen('game');
+      updatePlayersUI();
+      updateTokensUI();
+      startTurn();
+    }
+
+    function resetGame() {
+      state.currentPlayerIndex = 0;
+      state.turnCount = 0;
+      state.reverseTurn = false;
+      state.players.forEach(p => {
+        p.trash = 0;
+        p.score = 0;
+        p.tokens = [];
+        p.cards = [];
+        p.skippedTurn = false;
+      });
+      state.tokens.forEach(t => {
+        t.revealed = false;
+        t.owner = null;
+      });
+      state.newCard = null;
+      clearTimeout(state.turnTimer);
+      clearTimeout(state.botTimer);
+    }
+
+    // === UI ===
+    function updatePlayersUI() {
+      const container = document.getElementById('players-info');
+      container.innerHTML = '';
+      state.players.forEach((p, i) => {
+        const box = document.createElement('div');
+        box.className = `player-box ${p.isHuman ? 'human' : ''} ${i === state.currentPlayerIndex ? 'active' : ''}`;
+        if (p.skippedTurn) box.style.opacity = '0.6';
+        box.innerHTML = `
+          <h3>${p.name}</h3>
+          <p>Basura: ${p.trash}</p>
+          <p>Puntaje: ${p.score}</p>
+          <p>Fichas: ${p.tokens.map(t => t === 0.5 ? '0.5' : t).join(', ') || 'ninguna'}</p>
+          <p>Cartas: ${p.cards.length}</p>
+        `;
+        container.appendChild(box);
+      });
+    }
+
+    function updateTurnIndicator() {
+      const player = state.players[state.currentPlayerIndex];
+      document.getElementById('current-player-name').textContent = player.name;
+      document.getElementById('turn-indicator').textContent = `Turno de: ${player.name}`;
+    }
+
+    function updateActionButtons() {
+      const container = document.getElementById('action-buttons');
+      container.innerHTML = '';
+      const player = state.players[state.currentPlayerIndex];
+
+      if (!player.isHuman) return;
+
+      if (player.skippedTurn) {
+        const btn = document.createElement('button');
+        btn.textContent = 'Turno perdido...';
+        btn.disabled = true;
+        btn.className = 'btn-purple';
+        container.appendChild(btn);
+        return;
+      }
+
+      // Botón tienda siempre visible
+      const shopBtn = document.createElement('button');
+      shopBtn.textContent = 'Ir a La Tiendita';
+      shopBtn.className = 'btn-yellow';
+      shopBtn.onclick = openShop;
+      container.appendChild(shopBtn);
+
+      // Si no hay carta nueva
+      if (!state.newCard && !player.cards.some(c => c)) {
+        const drawBtn = document.createElement('button');
+        drawBtn.textContent = 'Recoger Carta Nueva';
+        drawBtn.className = 'btn-cyan';
+        drawBtn.onclick = drawCard;
+        container.appendChild(drawBtn);
+      }
+
+      // Si hay carta nueva
+      if (state.newCard) {
+        const applyBtn = document.createElement('button');
+        applyBtn.textContent = 'Aplicar Carta Nueva';
+        applyBtn.className = 'btn-pink';
+        applyBtn.onclick = () => applyCard(state.newCard, true);
+        container.appendChild(applyBtn);
+
+        const storeBtn = document.createElement('button');
+        storeBtn.textContent = 'Almacenar Carta Nueva';
+        storeBtn.className = 'btn-purple';
+        storeBtn.disabled = player.cards.length >= 5;
+        storeBtn.onclick = storeNewCard;
+        container.appendChild(storeBtn);
+      }
+
+      // Finalizar turno
+      if (state.newCard || player.cards.length > 0) {
+        const endBtn = document.createElement('button');
+        endBtn.textContent = 'Finalizar Turno';
+        endBtn.className = 'btn-pink';
+        endBtn.onclick = endTurn;
+        container.appendChild(endBtn);
+      }
+    }
+
+    function updateStoredCards() {
+      const list = document.getElementById('stored-cards-list');
+      list.innerHTML = '';
+      const player = state.players[state.currentPlayerIndex];
+      if (!player.isHuman) return;
+
+      player.cards.forEach((card, i) => {
+        const tag = document.createElement('div');
+        tag.className = 'card-tag';
+        tag.textContent = card.name;
+        tag.onclick = () => applyStoredCard(i);
+        list.appendChild(tag);
+      });
+    }
+
+    function updateTokensUI() {
+      const container = document.getElementById('tokens');
+      container.innerHTML = '';
+      state.tokens.forEach(token => {
+        const div = document.createElement('div');
+        div.className = `token ${token.revealed ? 'revealed ' + token.color : ''} ${token.owner ? 'removed' : ''}`;
+        container.appendChild(div);
+      });
+    }
+
+    // === TURNO ===
+    function startTurn() {
+      const player = state.players[state.currentPlayerIndex];
+      player.skippedTurn = false;
+      updatePlayersUI();
+      updateTurnIndicator();
+      updateStoredCards();
+      updateActionButtons();
+
+      if (!player.isHuman) {
+        state.botTimer = setTimeout(botPlay, 5000);
+      } else {
+        state.turnTimer = setTimeout(() => {
+          showMessage('¡Perdiste tu turno por inactividad!');
+          endTurn();
+        }, 8000);
+      }
+    }
+
+    function endTurn() {
+      clearTimeout(state.turnTimer);
+      clearTimeout(state.botTimer);
+      state.newCard = null;
+      state.turnCount++;
+
+      if (checkGameEnd()) return;
+
+      // Avanzar turno
+      do {
+        state.currentPlayerIndex = state.reverseTurn
+          ? (state.currentPlayerIndex - 1 + 4) % 4
+          : (state.currentPlayerIndex + 1) % 4;
+      } while (state.players[state.currentPlayerIndex].skippedTurn);
+
+      startTurn();
+    }
+
+    function checkGameEnd() {
+      const tokensLeft = state.tokens.filter(t => !t.owner).length;
+      if (tokensLeft === 0 || state.turnCount >= state.maxTurns) {
+        endGame();
+        return true;
+      }
+      return false;
+    }
+
+    function endGame() {
+      const sorted = [...state.players].sort((a, b) => b.score - a.score);
+      const list = document.getElementById('ranking-list');
+      list.innerHTML = '';
+      sorted.forEach((p, i) => {
+        const div = document.createElement('div');
+        div.textContent = `${i + 1}. ${p.name} — ${p.score} puntos`;
+        if (i === 0) div.className = 'winner';
+        list.appendChild(div);
+      });
+      showScreen('ranking');
+    }
+
+    // === ACCIONES ===
+    function drawCard() {
+      clearTimeout(state.turnTimer);
+      if (state.deck.length === 0) state.deck = createDeck();
+      state.newCard = state.deck.pop();
+      showMessage(`Sacaste: ${state.newCard.name}`);
+      updateActionButtons();
+    }
+
+    function storeNewCard() {
+      const player = state.players[state.currentPlayerIndex];
+      if (player.cards.length >= 5) return;
+      player.cards.push(state.newCard);
+      state.newCard = null;
+      updateStoredCards();
+      updateActionButtons();
+    }
+
+    function applyStoredCard(index) {
+      const player = state.players[state.currentPlayerIndex];
+      if (!player.isHuman || index >= player.cards.length) return;
+      clearTimeout(state.turnTimer);
+      const card = player.cards.splice(index, 0)[0];
+      applyCard(card, false);
+      updateStoredCards();
+    }
+
+    function applyCard(card, isNew) {
+      const player = state.players[state.currentPlayerIndex];
+      if (isNew) state.newCard = null;
+
+      switch (card.type) {
+        case 'trash':
+          player.trash += card.value;
+          showMessage(`+${card.value} basura`);
+          break;
+        case 'steal':
+          openTargetSelection('Robo-Basura', target => {
+            const roll = rollDice();
+            const targetPlayer = state.players[target];
+            const stolen = Math.min(roll, targetPlayer.trash);
+            targetPlayer.trash -= stolen;
+            player.trash += stolen;
+            showMessage(`¡Robaste ${stolen} basura!`);
+            updatePlayersUI();
+          });
+          break;
+        case 'fish':
+          openFishModal();
+          return;
+        case 'swap':
+          openTargetSelection('Intercambio de Ajolotes', target => {
+            const pRoll = rollDice();
+            const tRoll = rollDice();
+            if (pRoll > tRoll && state.players[target].tokens.length > 0) {
+              const idx = Math.floor(Math.random() * state.players[target].tokens.length);
+              const token = state.players[target].tokens.splice(idx, 1)[0];
+              state.players[target].score -= token;
+              player.tokens.push(token);
+              player.score += token;
+              showMessage(`¡Intercambiaste una ficha +${token} puntos!`);
+            } else {
+              showMessage(pRoll > tRoll ? 'El rival no tiene fichas' : '¡Perdiste el duelo!');
+            }
+            updatePlayersUI();
+          });
+          break;
+        case 'skip':
+          openTargetSelection('Duelo de Perder Turno', target => {
+            const pRoll = rollDice();
+            const tRoll = rollDice();
+            if (pRoll > tRoll) {
+              state.players[target].skippedTurn = true;
+              showMessage('¡Ganaste el duelo! Rival pierde turno.');
+            } else {
+              player.skippedTurn = true;
+              showMessage('¡Perdiste el duelo! Pierdes tu próximo turno.');
+            }
+          });
+          break;
+        case 'rotate':
+          const trashes = state.players.map(p => p.trash);
+          state.players.forEach((p, i) => {
+            p.trash = trashes[state.reverseTurn ? (i + 1) % 4 : (i - 1 + 4) % 4];
+          });
+          showMessage('¡Basura rotada entre jugadores!');
+          updatePlayersUI();
+          break;
+        case 'reverse':
+          state.reverseTurn = !state.reverseTurn;
+          showMessage(`¡Orden de turnos ${state.reverseTurn ? 'invertido' : 'normalizado'}!`);
+          break;
+      }
+
+      if (isNew || !card.type.includes('modal')) {
+        setTimeout(endTurn, 1500);
+      }
+    }
+
+    // === MODALES ===
+    function openShop() {
+      clearTimeout(state.turnTimer);
+      const modal = document.getElementById('shop-modal');
+      const items = document.getElementById('shop-items');
+      items.innerHTML = '';
+      const player = state.players[0]; // humano
+
+      shopItems.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'shop-item';
+        div.innerHTML = `
+          <div>
+            <strong>${item.name}</strong><br>
+            Costo: ${item.cost} basura | +${item.points} puntos
+          </div>
+          <button class="btn-cyan" ${player.trash < item.cost ? 'disabled' : ''}>
+            Comprar
+          </button>
+        `;
+        div.querySelector('button').onclick = () => {
+          player.trash -= item.cost;
+          player.score += item.points;
+          showMessage(`¡Compraste ${item.name}! +${item.points} puntos`);
+          updatePlayersUI();
+          modal.classList.remove('active');
+          endTurn();
         };
+        items.appendChild(div);
+      });
 
-        // TIPOS DE FICHAS (4 de cada tipo)
-        const TIPOS_FICHAS = ['rosa', 'cafe', 'amarilla', 'rosa', 'cafe', 'amarilla', 'rosa', 'cafe', 'amarilla', 'rosa', 'cafe', 'amarilla'];
+      modal.classList.add('active');
+      document.getElementById('close-shop').onclick = () => {
+        modal.classList.remove('active');
+        endTurn();
+      };
+    }
 
-        // VALORES DE FICHAS
-        const VALOR_FICHA = {
-            rosa: 0.5,
-            cafe: 1,
-            amarilla: 1.5
+    function openFishModal() {
+      const modal = document.getElementById('fish-modal');
+      const tokensDiv = document.getElementById('fish-tokens');
+      tokensDiv.innerHTML = '';
+      let selected = null;
+
+      state.tokens.filter(t => !t.owner).forEach(token => {
+        const div = document.createElement('div');
+        div.className = 'fish-token';
+        div.innerHTML = '<div class="token" style="margin:0 auto;"></div>';
+        div.onclick = () => {
+          document.querySelectorAll('.fish-token').forEach(d => d.classList.remove('selected'));
+          div.classList.add('selected');
+          selected = token;
+          document.getElementById('confirm-fish').disabled = false;
         };
+        tokensDiv.appendChild(div);
+      });
 
-        // OBJETOS TIENDA
-        const OBJETOS_TIENDA = [
-            {nombre: 'Comida Básica', costo: 3, puntos: 1},
-            {nombre: 'Comida Premium', costo: 7, puntos: 2},
-            {nombre: 'Comida Deluxe', costo: 12, puntos: 4}
-        ];
+      document.getElementById('confirm-fish').onclick = () => {
+        if (!selected) return;
+        selected.revealed = true;
+        selected.owner = state.currentPlayerIndex;
+        const player = state.players[state.currentPlayerIndex];
+        player.tokens.push(selected.value);
+        player.score += selected.value;
+        showMessage(`¡Pescaste una ficha ${selected.color === 'pink' ? 'rosa' : selected.color === 'brown' ? 'café' : 'amarilla'} +${selected.value} puntos!`);
+        updateTokensUI();
+        updatePlayersUI();
+        modal.classList.remove('active');
+        endTurn();
+      };
 
-        // TIPOS DE CARTAS
-        const TIPOS_CARTAS = [
-            {nombre: 'Basura +1', tipo: 'basura', valor: 1, probabilidad: 0.3},
-            {nombre: 'Basura +2', tipo: 'basura', valor: 2, probabilidad: 0.25},
-            {nombre: 'Basura +3', tipo: 'basura', valor: 3, probabilidad: 0.25},
-            {nombre: 'Robo-Basura', tipo: 'robo', probabilidad: 0.05},
-            {nombre: 'Hora de Pescar', tipo: 'pescar', probabilidad: 0.05},
-            {nombre: 'Intercambio de Ajolotes', tipo: 'intercambio', probabilidad: 0.03},
-            {nombre: 'Duelo de Perder Turno', tipo: 'duelo', probabilidad: 0.03},
-            {nombre: 'Rotación de Basura', tipo: 'rotacion', probabilidad: 0.02},
-            {nombre: 'Cambio de Rotación', tipo: 'cambio', probabilidad: 0.02}
-        ];
+      document.getElementById('cancel-fish').onclick = () => {
+        modal.classList.remove('active');
+        endTurn();
+      };
 
-        // INICIALIZAR JUEGO
-        function iniciarJuego() {
-            document.getElementById('menu').style.display = 'none';
-            document.getElementById('game').style.display = 'block';
-            
-            // Resetear estado
-            juego.datos = juego.datos.map(() => ({basura: 0, puntos: 0, fichas: [], cartas: [], turnoPerdido: false}));
-            juego.turnoActual = 0;
-            juego.direccionTurno = 1;
-            juego.turnosTotales = 0;
-            juego.juegoTerminado = false;
-            
-            // Crear fichas
-            crearFichas();
-            barajarMazo();
-            
-            actualizarTodo();
-            siguienteTurno();
-        }
+      modal.classList.add('active');
+    }
 
-        function crearFichas() {
-            juego.fichasDisponibles = [...TIPOS_FICHAS];
-            juego.fichasDisponibles.sort(() => Math.random() - 0.5);
-        }
+    function openTargetSelection(title, callback) {
+      const modal = document.getElementById('target-modal');
+      document.getElementById('target-title').textContent = title;
+      const playersDiv = document.getElementById('target-players');
+      playersDiv.innerHTML = '';
 
-        function barajarMazo() {
-            juego.mazo = [...TIPOS_CARTAS];
-            // Duplicar mazo para más rondas
-            juego.mazo = juego.mazo.concat(juego.mazo);
-            juego.mazo.sort(() => Math.random() - 0.5);
-        }
-
-        function siguienteTurno() {
-            if (juego.juegoTerminado) return;
-
-            // Verificar turno perdido
-            if (juego.datos[juego.turnoActual].turnoPerdido) {
-                juego.datos[juego.turnoActual].turnoPerdido = false;
-                alert(`${juego.jugadores[juego.turnoActual]} perdió su turno`);
-                avanzarTurno();
-                return;
-            }
-
-            juego.turnosTotales++;
-            actualizarTurnoUI();
-            
-            if (juego.turnoActual === 0) {
-                // Turno humano
-                inicioTurnoHumano();
-            } else {
-                // Turno bot
-                setTimeout(() => botActua(), 2000);
-            }
-        }
-
-        function inicioTurnoHumano() {
-            juego.tiempoRestante = 8;
-            iniciarTimer();
-            mostrarBotones(['recoger']);
-        }
-
-        function botActua() {
-            const botIdx = juego.turnoActual;
-            const bot = juego.datos[botIdx];
-            
-            // Estrategia del bot
-            if (bot.cartas.length >= 5) {
-                // Debe usar carta almacenada
-                usarCartaAlmacenada(botIdx, 0);
-            } else if (bot.basura >= 7 && liderando() < botIdx) {
-                // Comprar en tienda si va perdiendo
-                abrirTienda(botIdx);
-            } else {
-                // Recoger nueva carta
-                recogerCartaBot(botIdx);
-            }
-        }
-
-        function recogerCartaBot(botIdx) {
-            const carta = juego.mazo.pop();
-            if (!carta) barajarMazo();
-            
-            if (botIdx.cartas.length < 5) {
-                botIdx.cartas.push(carta);
-            } else {
-                aplicarCarta(botIdx, carta);
-            }
-            
-            setTimeout(() => avanzarTurno(), 1500);
-        }
-
-        // EVENTOS DE BOTONES
-        function mostrarBotones(tipos) {
-            const container = document.getElementById('acciones');
-            container.innerHTML = '';
-            
-            if (tipos.includes('recoger')) {
-                const btn = document.createElement('button');
-                btn.className = 'btn-accion';
-                btn.textContent = 'Recoger Carta Nueva';
-                btn.onclick = recogerCartaHumano;
-                container.appendChild(btn);
-            }
-            
-            if (tipos.includes('aplicar')) {
-                const aplicar = document.createElement('button');
-                aplicar.className = 'btn-accion';
-                aplicar.textContent = 'Aplicar Carta Nueva';
-                aplicar.onclick = aplicarCartaNueva;
-                container.appendChild(aplicar);
-                
-                const almacenar = document.createElement('button');
-                almacenar.className = 'btn-accion';
-                almacenar.textContent = 'Almacenar Carta Nueva';
-                almacenar.onclick = almacenarCartaNueva;
-                container.appendChild(almacenar);
-            }
-            
-            // Siempre mostrar finalizar y tienda
-            const finalizar = document.createElement('button');
-            finalizar.className = 'btn-accion';
-            finalizar.textContent = 'Finalizar Turno';
-            finalizar.onclick = finalizarTurno;
-            container.appendChild(finalizar);
-            
-            const tienda = document.createElement('button');
-            tienda.className = 'btn-accion';
-            tienda.textContent = '🛒 Ir a La Tiendita';
-            tienda.onclick = () => abrirTienda(0);
-            container.appendChild(tienda);
-        }
-
-        function recogerCartaHumano() {
-            clearInterval(juego.timerInterval);
-            const carta = juego.mazo.pop();
-            if (!carta) barajarMazo();
-            
-            juego.cartaActual = carta;
-            alert(`Sacaste: ${carta.nombre}`);
-            mostrarBotones(['aplicar']);
-        }
-
-        function aplicarCartaNueva() {
-            aplicarCarta(0, juego.cartaActual);
-            juego.cartaActual = null;
-            mostrarBotones(['finalizar']);
-        }
-
-        function almacenarCartaNueva() {
-            if (juego.datos[0].cartas.length < 5) {
-                juego.datos[0].cartas.push(juego.cartaActual);
-                juego.cartaActual = null;
-                actualizarCartasAlmacenadas();
-                mostrarBotones(['finalizar']);
-            } else {
-                alert('¡Inventario lleno! Máximo 5 cartas.');
-            }
-        }
-
-        function finalizarTurno() {
-            clearInterval(juego.timerInterval);
-            avanzarTurno();
-        }
-
-        function avanzarTurno() {
-            juego.turnoActual = (juego.turnoActual + juego.direccionTurno + 4) % 4;
-            siguienteTurno();
-        }
-
-        // APLICAR CARTAS
-        function aplicarCarta(jugadorIdx, carta) {
-            switch(carta.tipo) {
-                case 'basura':
-                    juego.datos[jugadorIdx].basura += carta.valor;
-                    alert(`+${carta.valor} basura`);
-                    break;
-                    
-                case 'robo':
-                    roboBasura(jugadorIdx);
-                    break;
-                    
-                case 'pescar':
-                    abrirModalPesca(jugadorIdx);
-                    break;
-                    
-                case 'intercambio':
-                    intercambioAjolotes(jugadorIdx);
-                    break;
-                    
-                case 'duelo':
-                    dueloPerderTurno(jugadorIdx);
-                    break;
-                    
-                case 'rotacion':
-                    rotacionBasura();
-                    break;
-                    
-                case 'cambio':
-                    juego.direccionTurno *= -1;
-                    alert('¡Orden de turnos invertido!');
-                    break;
-            }
-            actualizarTodo();
-        }
-
-        function usarCartaAlmacenada(jugadorIdx, cartaIdx) {
-            const carta = juego.datos[jugadorIdx].cartas[cartaIdx];
-            juego.datos[jugadorIdx].cartas.splice(cartaIdx, 1);
-            aplicarCarta(jugadorIdx, carta);
-            actualizarCartasAlmacenadas();
-        }
-
-        // FUNCIONES ESPECÍFICAS DE CARTAS
-        function roboBasura(jugadorIdx) {
-            const dado = Math.floor(Math.random() * 6) + 1;
-            const objetivoIdx = Math.floor(Math.random() * 3) + 1; // No se roba a sí mismo
-            const robo = Math.min(dado, juego.datos[objetivoIdx].basura);
-            
-            juego.datos[jugadorIdx].basura += robo;
-            juego.datos[objetivoIdx].basura -= robo;
-            
-            alert(`¡Robaste ${robo} basura a ${juego.jugadores[objetivoIdx]}!`);
-        }
-
-        function abrirModalPesca(jugadorIdx) {
-            document.getElementById('pescar-modal').style.display = 'flex';
-            const container = document.getElementById('pescar-fichas');
-            container.innerHTML = '';
-            
-            juego.fichasDisponibles.forEach((tipo, idx) => {
-                const ficha = document.createElement('div');
-                ficha.className = `ficha ficha-gris`;
-                ficha.dataset.idx = idx;
-                ficha.onclick = () => seleccionarFichaPesca(ficha);
-                ficha.textContent = '?';
-                container.appendChild(ficha);
-            });
-            
-            juego.pescadorActual = jugadorIdx;
-        }
-
-        function seleccionarFichaPesca(ficha) {
-            document.querySelectorAll('#pescar-fichas .ficha').forEach(f => 
-                f.classList.remove('seleccionada')
-            );
-            ficha.classList.add('seleccionada');
-            document.getElementById('aceptar-pesca').disabled = false;
-            juego.fichaSeleccionada = parseInt(ficha.dataset.idx);
-        }
-
-        function confirmarPesca() {
-            const tipo = juego.fichasDisponibles[juego.fichaSeleccionada];
-            const puntos = VALOR_FICHA[tipo];
-            
-            juego.datos[juego.pescadorActual].puntos += puntos;
-            juego.datos[juego.pescadorActual].fichas.push(tipo);
-            juego.fichasDisponibles.splice(juego.fichaSeleccionada, 1);
-            
-            alert(`¡Pescaste ficha ${tipo.toUpperCase()}! +${puntos} puntos`);
-            cerrarPesca();
-            verificarFinJuego();
-        }
-
-        // ... (resto de funciones implementadas de manera similar)
-
-        // ACTUALIZAR UI
-        function actualizarTodo() {
-            actualizarJugadores();
-            actualizarFichas();
-            actualizarCartasAlmacenadas();
-        }
-
-        function actualizarJugadores() {
-            const container = document.getElementById('jugadores');
-            container.innerHTML = '';
-            
-            juego.jugadores.forEach((nombre, idx) => {
-                const box = document.createElement('div');
-                box.className = `jugador-box jugador-${idx === 0 ? 'tu' : 'bot'}`;
-                if (idx === juego.turnoActual) box.classList.add('jugador-activo');
-                
-                const fichasValor = juego.datos[idx].fichas.reduce((sum, f) => sum + VALOR_FICHA[f], 0);
-                
-                box.innerHTML = `
-                    <div class="jugador-nombre">${nombre}</div>
-                    <div class="jugador-stat">🗑️ Basura: ${juego.datos[idx].basura}</div>
-                    <div class="jugador-stat">⭐ Puntaje: ${juego.datos[idx].puntos.toFixed(1)}</div>
-                    <div class="jugador-stat">🦎 Fichas: ${fichasValor.toFixed(1)}</div>
-                    <div class="jugador-stat">📜 Cartas: ${juego.datos[idx].cartas.length}</div>
-                `;
-                container.appendChild(box);
-            });
-        }
-
-        // TIMER
-        function iniciarTimer() {
-            juego.timerInterval = setInterval(() => {
-                juego.tiempoRestante--;
-                document.getElementById('timer').textContent = `${juego.tiempoRestante}s ⏳`;
-                
-                if (juego.tiempoRestante <= 3) {
-                    document.getElementById('timer').classList.add('timer-critico');
-                }
-                
-                if (juego.tiempoRestante <= 0) {
-                    clearInterval(juego.timerInterval);
-                    alert('¡Tiempo agotado!');
-                    finalizarTurno();
-                }
-            }, 1000);
-        }
-
-        function verificarFinJuego() {
-            if (juego.fichasDisponibles.length === 0 || juego.turnosTotales >= 30) {
-                juego.juegoTerminado = true;
-                mostrarRanking();
-            }
-        }
-
-        function mostrarRanking() {
-            document.getElementById('game').style.display = 'none';
-            document.getElementById('fin').style.display = 'flex';
-            
-            const ranking = juego.datos.map((data, idx) => ({
-                ...data,
-                idx,
-                nombre: juego.jugadores[idx]
-            })).sort((a, b) => b.puntos - a.puntos);
-            
-            const container = document.getElementById('ranking-list');
-            container.innerHTML = '';
-            
-            ranking.forEach((jugador, pos) => {
-                const item = document.createElement('div');
-                item.className = `ranking-item ${pos === 0 ? 'ganador' : ''}`;
-                item.textContent = `${pos + 1}. ${jugador.nombre} — ${jugador.puntos.toFixed(1)} puntos`;
-                container.appendChild(item);
-            });
-        }
-
-        // FUNCIONES DE MODALES
-        function mostrarTutorial() {
-            document.getElementById('tutorial').style.display = 'flex';
-        }
-
-        function mostrarCreditos() {
-            document.getElementById('creditos').style.display = 'flex';
-        }
-
-        function cerrarModal(id) {
-            document.getElementById(id).style.display = 'none';
-        }
-
-        function salirJuego() {
-            if (confirm('¿Seguro que quieres salir?')) {
-                window.close();
-            }
-        }
-
-        function reiniciarJuego() {
-            document.getElementById('fin').style.display = 'none';
-            document.getElementById('menu').style.display = 'flex';
-        }
-
-        // Inicialización
-        window.onload = () => {
-            actualizarTodo();
+      state.players.forEach((p, i) => {
+        if (i === state.currentPlayerIndex) return;
+        const btn = document.createElement('button');
+        btn.textContent = p.name;
+        btn.className = 'btn-purple';
+        btn.style.margin = '0.5rem';
+        btn.onclick = () => {
+          modal.classList.remove('active');
+          callback(i);
+          setTimeout(endTurn, 1500);
         };
-    </script>
+        playersDiv.appendChild(btn);
+      });
+
+      document.getElementById('cancel-target').onclick = () => {
+        modal.classList.remove('active');
+        endTurn();
+      };
+
+      modal.classList.add('active');
+    }
+
+    // === BOT ===
+    function botPlay() {
+      const bot = state.players[state.currentPlayerIndex];
+      const human = state.players[0];
+      const leader = state.players.reduce((a, b) => b.score > a.score ? b : a);
+
+      // Estrategia simple
+      let action = 'draw';
+
+      if (bot.cards.length >= 5) {
+        action = 'apply_old';
+      } else if (bot.trash >= 10 && bot.score < human.score - 3) {
+        action = 'shop';
+      } else if (bot.cards.some(c => c.type === 'fish' || c.type === 'steal') && bot.score < leader.score) {
+        action = 'apply_special';
+      }
+
+      switch (action) {
+        case 'shop':
+          const item = shopItems.find(i => i.cost <= bot.trash && i.points >= 2) || shopItems[0];
+          if (bot.trash >= item.cost) {
+            bot.trash -= item.cost;
+            bot.score += item.points;
+            showMessage(`${bot.name} compró ${item.name}`);
+          } else {
+            action = 'draw';
+          }
+          break;
+        case 'apply_old':
+          const idx = bot.cards.findIndex(c => c.type === 'trash');
+          if (idx !== -1) {
+            const card = bot.cards.splice(idx, 1)[0];
+            bot.trash += card.value;
+          }
+          break;
+        case 'apply_special':
+          const specialIdx = bot.cards.findIndex(c => c.type === 'steal' || c.type === 'fish');
+          if (specialIdx !== -1) {
+            const card = bot.cards.splice(specialIdx, 1)[0];
+            applyCardBot(card);
+            return;
+          }
+          break;
+      }
+
+      if (action === 'draw' || action === 'apply_old') {
+        if (state.deck.length === 0) state.deck = createDeck();
+        const card = state.deck.pop();
+        if (bot.cards.length < 4 && Math.random() > 0.3) {
+          bot.cards.push(card);
+        } else {
+          // aplicar
+          if (card.type === 'trash') {
+            bot.trash += card.value;
+          } else if (card.type === 'fish' && state.tokens.some(t => !t.owner)) {
+            const avail = state.tokens.filter(t => !t.owner);
+            const best = avail.sort((a,b) => b.value - a.value)[0];
+            best.owner = state.currentPlayerIndex;
+            best.revealed = true;
+            bot.tokens.push(best.value);
+            bot.score += best.value;
+            updateTokensUI();
+          }
+        }
+      }
+
+      showMessage(`${bot.name} ha hecho su jugada`);
+      updatePlayersUI();
+      setTimeout(endTurn, 2000);
+    }
+
+    function applyCardBot(card) {
+      const bot = state.players[state.currentPlayerIndex];
+      let target = state.players.indexOf(state.players.reduce((a,b) => b.score > a.score ? b : a));
+      if (target === state.currentPlayerIndex) target = (target + 1) % 4;
+
+      switch (card.type) {
+        case 'steal':
+          const roll = rollDice();
+          const stolen = Math.min(roll, state.players[target].trash);
+          state.players[target].trash -= stolen;
+          bot.trash += stolen;
+          break;
+        case 'fish':
+          const avail = state.tokens.filter(t => !t.owner);
+          if (avail.length > 0) {
+            const best = avail.sort((a,b) => b.value - a.value)[0];
+            best.owner = state.currentPlayerIndex;
+            best.revealed = true;
+            bot.tokens.push(best.value);
+            bot.score += best.value;
+            updateTokensUI();
+          }
+          break;
+      }
+      updatePlayersUI();
+      setTimeout(endTurn, 2000);
+    }
+
+    // === UTILS ===
+    function rollDice() {
+      return Math.floor(Math.random() * 6) + 1;
+    }
+
+    function showMessage(text) {
+      const msg = document.getElementById('game-message');
+      msg.textContent = text;
+      msg.classList.add('show');
+      setTimeout(() => msg.classList.remove('show'), 2500);
+    }
+
+    // Inicializar
+    updateTokensUI();
+  </script>
 </body>
 </html>
