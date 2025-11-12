@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axolotl Panic - Salvemos Ajolotes</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Fredoka One', cursive; }
+        body { background: linear-gradient(135deg, #0f3d5e, #1a6b9f, #40c4ff); color: white; text-align: center; overflow-x: hidden; }
+        
+        /* MENÚ */
+        #menu { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('https://cdn.pixabay.com/photo/2017/01/12/19/34/axolotl-1975475_1280.jpg') center/cover; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; }
+        #menu::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+        #menu > * { position: relative; z-index: 1; }
+        #menu h1 { font-size: 6rem; color: #ff69b4; text-shadow: 0 0 30px #ff1493; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
+        .btn { margin: 20px; padding: 20px 50px; font-size: 2rem; background: #ffd700; color: #333; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 15px 30px rgba(0,0,0,0.5); transition: all 0.3s; }
+        .btn:hover { transform: scale(1.1); background: #ff4500; color: white; }
+
+        /* TUTORIAL */
+        #tutorial { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 150; padding: 20px; overflow-y: auto; }
+        #tutorial-content { max-width: 800px; margin: 0 auto; background: #40c4ff; padding: 40px; border-radius: 30px; border: 5px solid white; }
+        #tutorial-content h2 { color: #ff69b4; font-size: 2.5rem; margin-bottom: 20px; }
+        #tutorial-content ul { text-align: left; font-size: 1.3rem; line-height: 1.6; }
+        #tutorial-content li { margin: 10px 0; }
+
+        /* TABLERO */
+        #game { display: none; padding: 20px; }
+        .tablero { background: #40c4ff; border: 15px solid white; border-radius: 30px; padding: 40px; max-width: 1200px; margin: 20px auto; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+        .jugador { position: absolute; background: rgba(255,255,255,0.9); color: #333; padding: 20px; border-radius: 50%; font-weight: bold; font-size: 1.5rem; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        #tu { bottom: 30px; left: 50%; transform: translateX(-50%); background: #ff69b4; color: white; }
+        #roger { top: 30px; left: 20%; background: #ffd700; }
+        #pato { bottom: 60%; left: 10%; background: #90ee90; color: black; }
+        #eli { bottom: 60%; right: 10%; background: brown; color: white; }
+
+        /* FICHAS - CENTRO BLOQUEADAS */
+        .fichas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 40px auto; max-width: 400px; }
+        .ficha { width: 120px; height: 120px; background: #333; border: 10px solid gold; border-radius: 50%; cursor: not-allowed; transition: all 0.3s; opacity: 0.7; }
+        .ficha.activa { cursor: grab; opacity: 1; transform: scale(1.05); }
+        .ficha:hover.activa { transform: scale(1.15); }
+        .rosa { background: pink !important; }
+        .cafe { background: brown !important; }
+        .amarilla { background: yellow !important; color: black; }
+
+        /* MAZO */
+        .mazo { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin: 30px 0; }
+        .carta { width: 110px; height: 160px; background: white; border-radius: 25px; box-shadow: 0 15px 30px rgba(0,0,0,0.4); cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 1.1rem; color: black; transition: all 0.3s; }
+        .carta:hover { transform: scale(1.05); }
+        .basura { background: #d3d3d3 !important; }
+        .comodin { background: #ffd700 !important; }
+        .pescar { background: #ff69b4 !important; color: white; }
+
+        /* TIENDA */
+        #tienda-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 200; justify-content: center; align-items: center; }
+        .tienda { background: #333; padding: 50px; border-radius: 50%; width: 450px; height: 450px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 20px 40px rgba(0,0,0,0.8); }
+        .comida-btn { margin: 15px; padding: 20px 40px; background: #90ee90; color: black; border-radius: 40px; font-weight: bold; font-size: 1.2rem; cursor: pointer; transition: 0.3s; }
+        .comida-btn:hover { transform: scale(1.1); }
+
+        /* PUNTOS + TIMER */
+        .puntos { position: fixed; top: 20px; right: 20px; background: rgba(0,0,0,0.8); padding: 25px; border-radius: 20px; font-size: 1.4rem; z-index: 50; }
+        .timer { font-size: 2rem; color: #ffd700; margin-top: 10px; }
+        .turnos-total { position: fixed; top: 20px; left: 20px; background: rgba(0,0,0,0.8); padding: 20px; border-radius: 20px; font-size: 1.4rem; }
+
+        /* FIN */
+        #fin { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 300; justify-content: center; align-items: center; flex-direction: column; animation: confeti 3s infinite; }
+        @keyframes confeti { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
+        #fin h2 { font-size: 6rem; color: #ffd700; margin-bottom: 20px; }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) { .ficha { width: 90px; height: 90px; } .carta { width: 80px; height: 120px; font-size: 1rem; } #menu h1 { font-size: 4rem; } }
+    </style>
+</head>
+<body>
+
+    <!-- MENÚ -->
+    <div id="menu">
+        <h1>🦎 AXOLOTL PANIC 🦎</h1>
+        <button class="btn" id="jugar">JUGAR</button>
+        <button class="btn" id="tutorial-btn">TUTORIAL</button>
+        <button class="btn" style="background:#ff4500;" onclick="location.reload()">SALIR</button>
+    </div>
+
+    <!-- TUTORIAL -->
+    <div id="tutorial">
+        <div id="tutorial-content">
+            <h2>🎮 Objetivo del Juego</h2>
+            <p>Ser el jugador con más puntos al final del juego. Gana puntos pescando fichas de ajolotes y comprando objetos en la tienda.</p>
+            
+            <h2>¿Cómo Jugar?</h2>
+            <ul>
+                <li><strong>Basura:</strong> Recurso que ganas con cartas. Úsala para comprar en la tienda.</li>
+                <li><strong>Puntos:</strong> Pesca fichas (+0.5, +1, +1.5) o compra objetos (+1, +2, +4).</li>
+                <li><strong>Cartas:</strong> Recógelas cada turno. Aplícalas o almacénalas (máx 5).</li>
+                <li><strong>Fichas:</strong> 12 fichas de ajolotes: rosas (0.5), cafés (1), amarillas (1.5).</li>
+            </ul>
+
+            <h2>Tipos de Cartas</h2>
+            <ul>
+                <li><strong>Basura +1/+2/+3:</strong> Ganas basura.</li>
+                <li><strong>Robo-Basura:</strong> Tira un dado y róbale basura a un rival.</li>
+                <li><strong>Hora de Pescar:</strong> Escoge y pesca una ficha de ajolote.</li>
+                <li><strong>Intercambio de Ajolotes:</strong> Duelo de dados. Si ganas, robas una ficha.</li>
+                <li><strong>Duelo de Perder Turno:</strong> Duelo de dados. El perdedor pierde su próximo turno.</li>
+                <li><strong>Rotación de Basura:</strong> Todos intercambian basura en orden.</li>
+                <li><strong>Cambio de Rotación:</strong> Invierte el orden de los turnos.</li>
+            </ul>
+
+            <h2>Tu Turno</h2>
+            <ul>
+                <li>Tienes <strong>8 segundos</strong> para actuar o pierdes el turno.</li>
+                <li>Recoge una carta nueva, visita la tienda o usa una carta almacenada.</li>
+                <li>Termina tu turno cuando estés listo.</li>
+            </ul>
+
+            <h2>Fin del Juego</h2>
+            <p>El juego termina cuando se pescan las <strong>12 fichas</strong> o después de <strong>30 turnos totales</strong>. ¡El jugador con más puntos gana!</p>
+
+            <button class="btn" id="regresar">← Regresar al Menú</button>
+        </div>
+    </div>
+
+    <!-- JUEGO -->
+    <div id="game">
+        <div class="turnos-total">
+            Turnos Totales: <span id="turnos-total">0</span>/30
+        </div>
+        <div class="puntos">
+            <div>🗑️ <span id="basura-tu">0</span></div>
+            <div>🦎 <span id="ajolotes-tu">0</span></div>
+            <div>⭐ <span id="puntos-tu">0</span></div>
+            <div>Turno: <span id="turno-nombre">TÚ</span></div>
+            <div class="timer" id="timer">8s ⏳</div>
+        </div>
+
+        <h2 style="margin: 20px 0;">¡Turno de <span id="turno-nombre-big">TÚ</span>!</h2>
+
+        <div class="tablero">
+            <div class="jugador" id="tu">TÚ</div>
+            <div class="jugador" id="roger">Roger</div>
+            <div class="jugador" id="pato">Pato</div>
+            <div class="jugador" id="eli">Eli</div>
+
+            <h3>🏞️ LAGO XOCHIMILCO (12 FICHAS)</h3>
+            <div class="fichas" id="lago"></div>
+
+            <h3>🎴 RECOGER CARTA</h3>
+            <div class="mazo">
+                <div class="carta" id="carta-mazo">¡TOCA!<br>🎲</div>
+            </div>
+
+            <button class="btn" id="tienda-btn">🛒 La Tiendita</button>
+            <button class="btn" id="fin-turno">✅ Fin Turno</button>
+        </div>
+    </div>
+
+    <!-- TIENDA -->
+    <div id="tienda-modal">
+        <div class="tienda">
+            <h2>🛒 LA TIENDITA</h2>
+            <p>🗑️ Tienes: <span id="basura-tienda">0</span></p>
+            <button class="comida-btn" data-costo="5" data-pts="1">+1 ⭐<br>(5🗑️)</button>
+            <button class="comida-btn" data-costo="10" data-pts="2">+2 ⭐<br>(10🗑️)</button>
+            <button class="comida-btn" data-costo="15" data-pts="4">+4 ⭐<br>(15🗑️)</button>
+            <button class="btn" id="cerrar-tienda">❌ Salir</button>
+        </div>
+    </div>
+
+    <!-- FIN -->
+    <div id="fin">
+        <h2 id="ganador-text">¡GANASTE!</h2>
+        <p id="ganador-puntos"></p>
+        <button class="btn" onclick="location.reload()">🔄 Jugar Otra</button>
+    </div>
+
+    <audio id="musica" loop preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-short-lively-flute-2554.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="pesca" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-coin-win-notification-1939.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // === VARIABLES ===
+        let jugadores = ['TÚ', 'Roger', 'Pato', 'Eli'];
+        let turno = 0;
+        let datos = jugadores.map(() => ({ basura: 0, ajolotes: 0, puntos: 0 }));
+        let fichasRestantes = 12;
+        let turnosTotales = 0;
+        let coloresFichas = []; // Ocultos hasta pesca
+        let puedePescar = false;
+        let timerInterval;
+        let tiempoRestante = 8;
+        let direccionTurno = 1; // 1 normal, -1 invertida
+        let manoCartas = []; // Futuro: max 5
+
+        const eventosComodin = [
+            'Basura +1/+2/+3',
+            'Robo-Basura: Tira dado y roba a rival',
+            'Hora de Pescar: ¡PEZCA AHORA!',
+            'Intercambio de Ajolotes: Duelo dados',
+            'Duelo de Perder Turno: Duelo dados',
+            'Rotación de Basura: Todos rotan',
+            'Cambio de Rotación: Invierte turnos'
+        ];
+
+        // === MENÚ & TUTORIAL ===
+        document.getElementById('jugar').onclick = iniciarJuego;
+        document.getElementById('tutorial-btn').onclick = () => {
+            document.getElementById('menu').style.display = 'none';
+            document.getElementById('tutorial').style.display = 'block';
+        };
+        document.getElementById('regresar').onclick = () => {
+            document.getElementById('tutorial').style.display = 'none';
+            document.getElementById('menu').style.display = 'flex';
+        };
+
+        function iniciarJuego() {
+            document.getElementById('menu').style.display = 'none';
+            document.getElementById('game').style.display = 'block';
+            document.getElementById('musica').play().catch(() => {});
+            crearFichas();
+            actualizarTodo();
+            siguienteTurno();
+        }
+
+        // === FICHAS ===
+        function crearFichas() {
+            const lago = document.getElementById('lago');
+            coloresFichas = []; // 4 amarillas (1.5), 4 cafés (1), 4 rosas (0.5)
+            for(let i=0; i<4; i++) coloresFichas.push('rosa');
+            for(let i=0; i<4; i++) coloresFichas.push('cafe');
+            for(let i=0; i<4; i++) coloresFichas.push('amarilla');
+            // Barajar
+            coloresFichas.sort(() => Math.random() - 0.5);
+            coloresFichas.forEach((color, idx) => {
+                const f = document.createElement('div');
+                f.className = 'ficha';
+                f.dataset.idx = idx;
+                f.onclick = () => {};
+                lago.appendChild(f);
+            });
+        }
+
+        function activarPesca() {
+            puedePescar = true;
+            document.querySelectorAll('.ficha').forEach(f => f.classList.add('activa'));
+            alert('¡HORA DE PESCAR! Elige UNA ficha del lago.');
+        }
+
+        function revelarFicha(ficha) {
+            if (!puedePescar || ficha.classList.contains('revelada')) return;
+            const idx = parseInt(ficha.dataset.idx);
+            const color = coloresFichas[idx];
+            ficha.classList.add('revelada', color);
+            const pts = color === 'rosa' ? 0.5 : color === 'cafe' ? 1 : 1.5;
+            datos[turno].ajolotes += 1;
+            datos[turno].puntos += pts;
+            document.getElementById('pesca').play();
+            alert(`¡${jugadores[turno]} pescó ${color.toUpperCase()}! +${pts} pts`);
+            fichasRestantes--;
+            puedePescar = false;
+            document.querySelectorAll('.ficha').forEach(f => f.classList.remove('activa'));
+            actualizarTodo();
+            checkFinJuego();
+        }
+
+        // === CARTA ALEATORIA ===
+        document.getElementById('carta-mazo').onclick = recogerCarta;
+
+        function recogerCarta() {
+            const rand = Math.random();
+            if (rand < 0.6) { // 60% Basura
+                const val = Math.floor(Math.random() * 3) + 1;
+                datos[turno].basura += val;
+                alert(`+${val} 🗑️ Basura!`);
+            } else if (rand < 0.8) { // 20% Comodín
+                const evento = eventosComodin[Math.floor(Math.random() * eventosComodin.length)];
+                alert(`¡COMODÍN: ${evento}!`);
+                ejecutarEvento(evento);
+            } else { // 20% Pescar
+                alert('¡Hora de Pescar!');
+                activarPesca();
+            }
+            actualizarTodo();
+        }
+
+        function ejecutarEvento(evento) {
+            if (evento.includes('Basura')) {
+                // Ya manejado arriba
+            } else if (evento.includes('Robo-Basura')) {
+                const dado = Math.floor(Math.random() * 6) + 1;
+                const victima = (turno + 1 + Math.floor(Math.random() * 3)) % 4;
+                const robo = Math.min(dado, datos[victima].basura);
+                datos[turno].basura += robo;
+                datos[victima].basura -= robo;
+                alert(`¡Robaste ${robo} 🗑️ a ${jugadores[victima]}!`);
+            } else if (evento.includes('Pescar')) {
+                activarPesca();
+            } else if (evento.includes('Intercambio') || evento.includes('Duelo')) {
+                const miDado = Math.floor(Math.random() * 6) + 1;
+                const rivalDado = Math.floor(Math.random() * 6) + 1;
+                const rival = (turno + 1) % 4;
+                if (miDado > rivalDado) {
+                    // Robo ajolote
+                    if (datos[rival].ajolotes > 0) {
+                        datos[turno].ajolotes += 1;
+                        datos[turno].puntos += 1; // Promedio
+                        datos[rival].ajolotes -= 1;
+                        alert('¡Ganaste el duelo! Robaste ajolote.');
+                    }
+                } else {
+                    alert('¡Perdiste el duelo!');
+                }
+            } else if (evento.includes('Rotación')) {
+                const temp = [...datos.map(d => d.basura)];
+                for (let i = 0; i < 4; i++) {
+                    datos[(i + 1) % 4].basura = temp[i];
+                }
+                alert('¡Basura rotada!');
+            } else if (evento.includes('Cambio')) {
+                direccionTurno *= -1;
+                alert('¡Turnos invertidos!');
+            }
+            actualizarTodo();
+        }
+
+        // === TIENDA ===
+        document.getElementById('tienda-btn').onclick = abrirTienda;
+        document.getElementById('cerrar-tienda').onclick = cerrarTienda;
+        document.querySelectorAll('.comida-btn').forEach(btn => {
+            btn.onclick = function() {
+                const costo = parseInt(this.dataset.costo);
+                const pts = parseFloat(this.dataset.pts);
+                if (datos[turno].basura >= costo) {
+                    datos[turno].basura -= costo;
+                    datos[turno].puntos += pts;
+                    alert(`¡+${pts} pts comprados!`);
+                    actualizarTodo();
+                } else {
+                    alert('¡Basura insuficiente!');
+                }
+            };
+        });
+
+        function abrirTienda() {
+            document.getElementById('basura-tienda').textContent = datos[turno].basura;
+            document.getElementById('tienda-modal').style.display = 'flex';
+        }
+        function cerrarTienda() {
+            document.getElementById('tienda-modal').style.display = 'none';
+        }
+
+        // === TURNOS & TIMER ===
+        document.getElementById('fin-turno').onclick = finTurnoManual;
+
+        function siguienteTurno() {
+            turno = (turno + direccionTurno + 4) % 4;
+            turnosTotales++;
+            document.getElementById('turno-nombre').textContent = jugadores[turno];
+            document.getElementById('turno-nombre-big').textContent = jugadores[turno];
+            document.getElementById('turnos-total').textContent = turnosTotales;
+            actualizarTodo();
+            if (turno === 0) { // Tu turno
+                tiempoRestante = 8;
+                iniciarTimer();
+            } else {
+                botJuega();
+            }
+            checkFinJuego();
+        }
+
+        function finTurnoManual() {
+            clearInterval(timerInterval);
+            siguienteTurno();
+        }
+
+        function iniciarTimer() {
+            timerInterval = setInterval(() => {
+                tiempoRestante--;
+                document.getElementById('timer').textContent = `${tiempoRestante}s ⏳`;
+                if (tiempoRestante <= 0) {
+                    clearInterval(timerInterval);
+                    alert('¡Tiempo agotado! Pierdes turno.');
+                    siguienteTurno();
+                }
+            }, 1000);
+        }
+
+        function botJuega() {
+            setTimeout(() => {
+                // Bot IA simple
+                if (Math.random() < 0.8) recogerCarta();
+                if (datos[turno].basura >= 10 && Math.random() < 0.6) {
+                    datos[turno].basura -= 10;
+                    datos[turno].puntos += 2;
+                }
+                setTimeout(() => siguienteTurno(), 1500);
+            }, 1000);
+        }
+
+        // === ACTUALIZAR & FIN ===
+        function actualizarTodo() {
+            document.getElementById('basura-tu').textContent = datos[0].basura.toFixed(1);
+            document.getElementById('ajolotes-tu').textContent = datos[0].ajolotes;
+            document.getElementById('puntos-tu').textContent = datos[0].puntos.toFixed(1);
+            // Actualiza fichas onclick si pesca activa
+            document.querySelectorAll('.ficha').forEach(f => {
+                f.onclick = puedePescar ? () => revelarFicha(f) : () => {};
+            });
+        }
+
+        function checkFinJuego() {
+            if (fichasRestantes === 0 || turnosTotales >= 30) {
+                const maxIdx = datos.reduce((maxI, d, i) => d.puntos > datos[maxI].puntos ? i : maxI, 0);
+                document.getElementById('ganador-text').textContent = `¡${jugadores[maxIdx]} GANÓ!`;
+                document.getElementById('ganador-puntos').textContent = `${datos[maxIdx].puntos.toFixed(1)} pts`;
+                document.getElementById('fin').style.display = 'flex';
+                clearInterval(timerInterval);
+            }
+        }
+
+        // Event listeners para fichas
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('ficha') && puedePescar) {
+                revelarFicha(e.target);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -69,3 +69,4 @@ __Prototipo por:Replit__: - [Ver aquí](https://soypatu.github.io/Axolotl-Panic/
 __Chat con la IA:Gemini__: - [Ver aquí](https://g.co/gemini/share/d1aa2147f178)
 
 __Prototipo por:Gemini__: - [Ver aquí](https://soypatu.github.io/Axolotl-Panic/axolotl_gemini.html)
+
