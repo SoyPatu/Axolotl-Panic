@@ -5,17 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>AXOLOTL PANIC - DELUXE EDITION</title>
   <style>
+    /* Colores pastel */
     :root {
-      --pink: #ee4cb7;
-      --cyan: #6be5f6;
-      --yellow: #f9f86a;
-      --purple: #d8b4ff;
-      --light-pink: #ffe4f5;
-      --light-purple: #e6d6ff;
-      --light-yellow: #fff9c4;
-      --gray: #bbb;
-      --dark-gray: #777;
-      --blue: #4fc3f7;
+      --rosa: #ee4cb7;
+      --cian: #6be5f6;
+      --amarillo: #f9f86a;
+      --rosa-claro: #ffe4f5;
+      --morado-claro: #d8b8ff;
+      --gris: #cccccc;
+      --azul-claro: #a0e7ff;
     }
 
     * {
@@ -26,7 +24,7 @@
     }
 
     body {
-      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      background: linear-gradient(to bottom, #1a1a2e, #16213e);
       color: white;
       min-height: 100vh;
       display: flex;
@@ -35,110 +33,114 @@
       overflow: hidden;
     }
 
-    .screen {
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      position: absolute;
-      top: 0;
-      left: 0;
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      transition: all 0.5s ease;
       opacity: 0;
-      transition: opacity 0.6s ease;
-      pointer-events: none;
+      transform: scale(0.95);
     }
 
-    .screen.active {
+    .container.active {
       opacity: 1;
-      pointer-events: all;
+      transform: scale(1);
+    }
+
+    h1, h2, h3 {
+      text-align: center;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
 
     h1 {
-      font-size: 3.5rem;
-      color: var(--pink);
-      text-shadow: 0 0 10px var(--cyan);
-      margin-bottom: 2rem;
+      font-size: 3rem;
+      color: var(--rosa);
       animation: pulse 2s infinite;
     }
 
     @keyframes pulse {
-      0%, 100% { transform: scale(1); }
+      0% { transform: scale(1); }
       50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
     }
 
     button {
-      background: var(--cyan);
+      background: var(--cian);
       color: #000;
       border: none;
-      padding: 1rem 2rem;
-      margin: 0.8rem;
-      font-size: 1.4rem;
+      padding: 15px 30px;
+      margin: 10px;
       border-radius: 15px;
+      font-size: 1.2rem;
+      font-weight: bold;
       cursor: pointer;
-      box-shadow: 0 6px 0 #0095c7;
-      transition: all 0.2s;
-      min-width: 220px;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     }
 
     button:hover {
       transform: translateY(-3px);
-      box-shadow: 0 10px 0 #0095c7;
-    }
-
-    button:active {
-      transform: translateY(3px);
-      box-shadow: 0 2px 0 #0095c7;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      background: var(--amarillo);
     }
 
     button:disabled {
       opacity: 0.5;
       cursor: not-allowed;
       transform: none;
-      box-shadow: 0 6px 0 #666;
     }
 
-    .btn-pink { background: var(--pink); box-shadow: 0 6px 0 #c2185b; }
-    .btn-yellow { background: var(--yellow); color: #000; box-shadow: 0 6px 0 #f9a825; }
-    .btn-purple { background: var(--purple); box-shadow: 0 6px 0 #9c27b0; }
+    .btn-rosa { background: var(--rosa); color: white; }
+    .btn-amarillo { background: var(--amarillo); color: #000; }
 
-    /* MENU */
+    /* Pantallas */
+    .screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    /* Menú Principal */
+    #menu-screen .logo {
+      width: 300px;
+      margin-bottom: 20px;
+    }
+
     #menu-screen button {
-      font-size: 1.6rem;
-      padding: 1.2rem 2.5rem;
+      width: 300px;
+      font-size: 1.5rem;
     }
 
-    /* GAMEPLAY */
-    #game-screen {
-      padding: 1rem;
-      justify-content: flex-start;
-      overflow-y: auto;
+    /* Gameplay */
+    #gameplay-screen {
+      display: grid;
+      grid-template-rows: auto auto 1fr auto auto;
+      gap: 15px;
+      height: 100vh;
+      padding: 10px;
     }
 
-    .exit-btn {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: #ff4444;
-      color: white;
-      padding: 0.6rem 1.2rem;
-      font-size: 1rem;
-      box-shadow: 0 4px 0 #c00;
-    }
-
-    .players-info {
+    .player-info {
       display: flex;
       justify-content: space-around;
-      width: 100%;
-      margin-bottom: 1rem;
       flex-wrap: wrap;
     }
 
     .player-box {
-      background: var(--light-purple);
-      padding: 1rem;
-      border-radius: 15px;
+      background: var(--rosa-claro);
+      color: #000;
+      padding: 12px;
+      border-radius: 12px;
       width: 22%;
       min-width: 180px;
       text-align: center;
@@ -146,167 +148,126 @@
       transition: all 0.3s;
     }
 
-    .player-box.human { background: var(--light-pink); }
-    .player-box.active { border: 4px solid var(--pink); transform: scale(1.05); }
-
-    .player-box h3 { color: var(--blue); margin-bottom: 0.5rem; }
-    .player-box p { margin: 0.3rem 0; font-size: 0.9rem; }
+    .player-box.human { background: var(--rosa-claro); }
+    .player-box.bot { background: var(--morado-claro); }
+    .player-box.current-turn {
+      border: 4px solid var(--rosa);
+      transform: scale(1.05);
+      box-shadow: 0 0 20px var(--rosa);
+    }
 
     .turn-indicator {
       font-size: 2rem;
-      color: var(--cyan);
-      margin: 1rem 0;
-      text-shadow: 0 0 8px var(--blue);
-    }
-
-    .turn-indicator span {
-      color: var(--blue);
-      font-weight: bold;
+      color: var(--azul-claro);
+      text-align: center;
+      padding: 15px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 15px;
     }
 
     .action-buttons {
       display: flex;
-      flex-wrap: wrap;
       justify-content: center;
-      gap: 1rem;
-      margin: 1rem 0;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin: 15px 0;
     }
 
     .stored-cards {
-      background: var(--light-yellow);
-      padding: 1rem;
-      border-radius: 15px;
-      width: 90%;
-      max-width: 800px;
-      margin: 1rem auto;
-      min-height: 80px;
-    }
-
-    .stored-cards h3 {
+      background: var(--amarillo);
       color: #000;
-      margin-bottom: 0.5rem;
+      padding: 15px;
+      border-radius: 15px;
+      min-height: 80px;
+      width: 100%;
       text-align: center;
     }
 
     .card-tag {
       display: inline-block;
-      background: var(--cyan);
+      background: white;
       color: #000;
-      padding: 0.5rem 1rem;
-      margin: 0.3rem;
+      padding: 8px 15px;
+      margin: 5px;
       border-radius: 20px;
       cursor: pointer;
-      font-size: 0.9rem;
-      box-shadow: 0 3px 0 #0095c7;
-      transition: all 0.2s;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
 
     .card-tag:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 0 #0095c7;
+      background: var(--cian);
     }
 
     .tokens-area {
-      margin: 1.5rem 0;
-      text-align: center;
-    }
-
-    .tokens-area h3 {
-      margin-bottom: 0.8rem;
-      color: var(--yellow);
-    }
-
-    .tokens {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
       gap: 8px;
+      padding: 15px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 15px;
     }
 
     .token {
-      width: 36px;
-      height: 36px;
+      width: 35px;
+      height: 35px;
       border-radius: 50%;
-      background: var(--gray);
-      border: 3px solid var(--dark-gray);
+      background: var(--gris);
       transition: all 0.3s;
     }
 
-    .token.revealed.pink { background: var(--pink); border-color: #c2185b; }
-    .token.revealed.brown { background: #8d6e63; border-color: #5d4037; }
-    .token.revealed.yellow { background: var(--yellow); border-color: #f9a825; }
+    .token.revealed.pink { background: var(--rosa); }
+    .token.revealed.brown { background: #b5651d; }
+    .token.revealed.yellow { background: var(--amarillo); }
 
-    .token.removed {
-      opacity: 0;
-      transform: scale(0);
-    }
-
-    .message {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(0,0,0,0.9);
+    .exit-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #ff4444;
       color: white;
-      padding: 1.5rem 2.5rem;
-      border-radius: 20px;
-      font-size: 1.4rem;
-      text-align: center;
-      z-index: 1000;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.4s;
-      border: 3px solid var(--cyan);
-      box-shadow: 0 0 20px var(--cyan);
     }
 
-    .message.show {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    /* MODALS */
+    /* Modales */
     .modal {
+      display: none;
       position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
+      top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,0.8);
-      display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 999;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.4s;
+      z-index: 1000;
     }
 
     .modal.active {
-      opacity: 1;
-      pointer-events: all;
+      display: flex;
     }
 
     .modal-content {
       background: white;
       color: #000;
-      padding: 2rem;
+      padding: 25px;
       border-radius: 20px;
       width: 90%;
-      max-width: 600px;
-      max-height: 80vh;
-      overflow-y: auto;
-      box-shadow: 0 0 30px var(--cyan);
-      border: 4px solid var(--pink);
-    }
-
-    .modal h2 {
+      max-width: 500px;
       text-align: center;
-      color: var(--pink);
-      margin-bottom: 1rem;
+      position: relative;
     }
 
-    .shop-item, .fish-token {
+    .close-modal {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #aaa;
+    }
+
+    .shop-item {
       background: #f0f0f0;
-      padding: 1rem;
-      margin: 1rem 0;
+      padding: 15px;
+      margin: 10px 0;
       border-radius: 12px;
       display: flex;
       justify-content: space-between;
@@ -314,228 +275,266 @@
     }
 
     .fish-token {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--gris);
+      margin: 8px;
       cursor: pointer;
-      transition: all 0.2s;
+      border: 3px solid transparent;
     }
 
     .fish-token.selected {
-      border: 3px solid var(--blue);
-      background: var(--light-yellow);
+      border: 3px solid var(--cian);
+      transform: scale(1.1);
     }
 
-    .modal-actions {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      margin-top: 1.5rem;
-    }
-
-    /* RANKING */
-    #ranking-screen {
-      text-align: center;
-    }
-
-    .ranking-list {
-      margin: 2rem 0;
-      font-size: 1.5rem;
-    }
-
-    .ranking-list div {
-      background: rgba(255,255,255,0.1);
-      margin: 0.8rem auto;
-      padding: 1rem;
+    .message {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--cian);
+      color: #000;
+      padding: 12px 25px;
       border-radius: 15px;
-      width: 70%;
-      max-width: 500px;
+      font-weight: bold;
+      z-index: 1001;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    .message.show {
+      opacity: 1;
+    }
+
+    /* Ranking */
+    .ranking-list {
+      background: rgba(0,0,0,0.4);
+      padding: 20px;
+      border-radius: 15px;
+      margin: 20px 0;
+      width: 100%;
+    }
+
+    .ranking-item {
+      padding: 10px;
+      margin: 8px 0;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      font-size: 1.3rem;
     }
 
     .winner {
-      color: var(--yellow) !important;
-      font-size: 1.8rem !important;
-      animation: pulse 1.5s infinite;
-    }
-
-    /* TUTORIAL & CREDITS */
-    .text-content {
-      background: rgba(255,255,255,0.1);
-      padding: 2rem;
-      border-radius: 15px;
-      margin: 1rem;
-      max-width: 800px;
-      line-height: 1.6;
-    }
-
-    @media (max-width: 768px) {
-      h1 { font-size: 2.5rem; }
-      .player-box { width: 45%; margin: 0.5rem; }
-      .players-info { justify-content: center; }
-      button { font-size: 1.2rem; padding: 0.8rem 1.5rem; }
+      color: var(--amarillo);
+      font-weight: bold;
+      font-size: 1.5rem;
     }
   </style>
 </head>
 <body>
-  <!-- MENU SCREEN -->
-  <div id="menu-screen" class="screen active">
-    <h1>AXOLOTL PANIC<br>DELUXE EDITION</h1>
-    <button id="play-btn" class="btn-pink">JUGAR</button>
-    <button id="tutorial-btn" class="btn-cyan">TUTORIAL</button>
-    <button id="credits-btn" class="btn-yellow">CRÉDITOS</button>
-    <button id="exit-btn-menu" class="btn-purple">SALIR</button>
-  </div>
-
-  <!-- TUTORIAL SCREEN -->
-  <div id="tutorial-screen" class="screen">
-    <h1>TUTORIAL</h1>
-    <div class="text-content" id="tutorial-text">
-      <p><strong>¡Bienvenido a AXOLOTL PANIC!</strong></p>
-      <p>Tu objetivo es ganar la mayor cantidad de <strong>puntos</strong> pescando fichas de ajolotes y comprando objetos en <strong>La Tiendita</strong>.</p>
-      <p>Cada turno puedes:</p>
-      <ul>
-        <li><strong>Recoger una carta</strong> y aplicarla o almacenarla (máx 5).</li>
-        <li><strong>Usar una carta almacenada</strong> haciendo clic en ella.</li>
-        <li><strong>Ir a La Tiendita</strong> para gastar basura en puntos.</li>
-      </ul>
-      <p>Las cartas te dan basura, roban a rivales, pescan fichas o activan eventos.</p>
-      <p>¡Tienes 8 segundos por turno! Si no actúas, pierdes el turno.</p>
-      <p>El juego termina tras 30 turnos o cuando se acaben las 12 fichas.</p>
-      <p><strong>¡Diviértete y sé estratégico!</strong></p>
+  <div id="main-container" class="container">
+    <!-- Pantalla Menú -->
+    <div id="menu-screen" class="screen active">
+      <img src="https://via.placeholder.com/300x200/ee4cb7/ffffff?text=AXOLOTL+PANIC" alt="Logo" class="logo">
+      <h1>AXOLOTL PANIC<br>DELUXE EDITION</h1>
+      <button id="btn-play">JUGAR</button>
+      <button id="btn-tutorial">TUTORIAL</button>
+      <button id="btn-credits">CRÉDITOS</button>
+      <button id="btn-exit">SALIR</button>
     </div>
-    <button id="back-tutorial" class="btn-pink">VOLVER</button>
-  </div>
 
-  <!-- CREDITS SCREEN -->
-  <div id="credits-screen" class="screen">
-    <h1>CRÉDITOS</h1>
-    <div class="text-content" id="credits-text">
-      <p><strong>Desarrollado por:</strong> Equipo Axolotl Panic</p>
-      <p><strong>Diseño y Programación:</strong> Grok 4 (xAI)</p>
-      <p><strong>Arte Conceptual:</strong> Inspirado en ajolotes adorables</p>
-      <p><strong>Música y SFX:</strong> Silencio ambiental (¡es un juego web!)</p>
-      <p><strong>Agradecimientos:</strong> A todos los ajolotes del mundo</p>
-      <p>© 2025 AXOLOTL PANIC DELUXE EDITION - Todos los derechos reservados</p>
+    <!-- Pantalla Tutorial -->
+    <div id="tutorial-screen" class="screen">
+      <h1>TUTORIAL</h1>
+      <div style="background:white;color:#000;padding:20px;border-radius:15px;margin:20px;">
+        <p><strong>¡Bienvenido a AXOLOTL PANIC!</strong></p>
+        <p>Recoge cartas, acumula basura y compra objetos para ganar puntos.</p>
+        <p>Pesca fichas de ajolote para sumar 0.5, 1 o 1.5 puntos.</p>
+        <p>Usa cartas especiales para robar, desafiar o invertir el juego.</p>
+        <p>¡El que tenga más puntos al final gana!</p>
+        <p>Tienes 8 segundos por turno. ¡No te duermas!</p>
+      </div>
+      <button id="back-to-menu1">Volver al Menú</button>
     </div>
-    <button id="back-credits" class="btn-pink">VOLVER</button>
-  </div>
 
-  <!-- GAME SCREEN -->
-  <div id="game-screen" class="screen">
-    <button class="exit-btn" id="exit-to-menu">Salir al Menú</button>
-    
-    <div class="players-info" id="players-info"></div>
-    
-    <div class="turn-indicator" id="turn-indicator">Turno de: <span id="current-player-name">Tu</span></div>
-    
-    <div class="action-buttons" id="action-buttons"></div>
-    
-    <div class="stored-cards" id="stored-cards-area">
-      <h3>Cartas Almacenadas (Haz clic para usar):</h3>
-      <div id="stored-cards-list"></div>
+    <!-- Pantalla Créditos -->
+    <div id="credits-screen" class="screen">
+      <h1>CRÉDITOS</h1>
+      <div style="background:white;color:#000;padding:20px;border-radius:15px;margin:20px;">
+        <p><strong>Desarrollado por:</strong> Tu Nombre</p>
+        <p><strong>Arte:</strong> Axolotl Team</p>
+        <p><strong>Música:</strong> Panic Sounds Inc.</p>
+        <p><strong>Idea original:</strong> Un axolotl en pánico</p>
+      </div>
+      <button id="back-to-menu2">Volver al Menú</button>
     </div>
-    
-    <div class="tokens-area">
-      <h3>Fichas de Ajolotes</h3>
-      <div class="tokens" id="tokens"></div>
+
+    <!-- Pantalla Juego -->
+    <div id="gameplay-screen" class="screen">
+      <button class="exit-btn" id="exit-to-menu">Salir al Menú</button>
+
+      <!-- Info Jugadores -->
+      <div class="player-info">
+        <div class="player-box human" id="player-0">
+          <strong>Tu</strong><br>
+          Basura: <span id="p0-trash">0</span><br>
+          Puntaje: <span id="p0-score">0</span><br>
+          Fichas: <span id="p0-tokens"></span><br>
+          Cartas: <span id="p0-cards">0</span>
+        </div>
+        <div class="player-box bot" id="player-1">
+          <strong>Bot 1</strong><br>
+          Basura: <span id="p1-trash">0</span><br>
+          Puntaje: <span id="p1-score">0</span><br>
+          Fichas: <span id="p1-tokens"></span><br>
+          Cartas: <span id="p1-cards">0</span>
+        </div>
+        <div class="player-box bot" id="player-2">
+          <strong>Bot 2</strong><br>
+          Basura: <span id="p2-trash">0</span><br>
+          Puntaje: <span id="p2-score">0</span><br>
+          Fichas: <span id="p2-tokens"></span><br>
+          Cartas: <span id="p2-cards">0</span>
+        </div>
+        <div class="player-box bot" id="player-3">
+          <strong>Bot 3</strong><br>
+          Basura: <span id="p3-trash">0</span><br>
+          Puntaje: <span id="p3-score">0</span><br>
+          Fichas: <span id="p3-tokens"></span><br>
+          Cartas: <span id="p3-cards">0</span>
+        </div>
+      </div>
+
+      <!-- Indicador de Turno -->
+      <div class="turn-indicator" id="turn-indicator">Turno de: Tu</div>
+
+      <!-- Botones de Acción -->
+      <div class="action-buttons" id="action-buttons">
+        <button id="btn-draw" class="btn-rosa">Recoger Carta Nueva</button>
+        <button id="btn-apply" style="display:none">Aplicar Carta Nueva</button>
+        <button id="btn-store" style="display:none">Almacenar Carta Nueva</button>
+        <button id="btn-end-turn" style="display:none" class="btn-amarillo">Finalizar Turno</button>
+        <button id="btn-shop">Ir a La Tiendita</button>
+      </div>
+
+      <!-- Cartas Almacenadas -->
+      <div class="stored-cards">
+        <strong>Cartas Almacenadas (Haz clic para usar):</strong>
+        <div id="stored-cards-container"></div>
+      </div>
+
+      <!-- Fichas de Ajolotes -->
+      <div>
+        <h3>Fichas de Ajolotes</h3>
+        <div class="tokens-area" id="tokens-area"></div>
+      </div>
+    </div>
+
+    <!-- Pantalla Ranking -->
+    <div id="ranking-screen" class="screen">
+      <h1>¡JUEGO TERMINADO!</h1>
+      <div class="ranking-list" id="ranking-list"></div>
+      <button id="back-to-menu3">Volver al Menú</button>
     </div>
   </div>
 
-  <!-- RANKING SCREEN -->
-  <div id="ranking-screen" class="screen">
-    <h1>¡JUEGO TERMINADO!</h1>
-    <div class="ranking-list" id="ranking-list"></div>
-    <button id="back-to-menu" class="btn-pink">Volver al Menú</button>
-  </div>
+  <!-- Mensaje Flotante -->
+  <div id="message" class="message"></div>
 
-  <!-- MODALS -->
+  <!-- Modal Tienda -->
   <div id="shop-modal" class="modal">
     <div class="modal-content">
-      <h2>🛍️ La Tiendita</h2>
-      <div id="shop-items"></div>
-      <div class="modal-actions">
-        <button id="close-shop" class="btn-pink">Salir</button>
+      <span class="close-modal" id="close-shop">&times;</span>
+      <h2>La Tiendita</h2>
+      <div id="shop-items">
+        <div class="shop-item">
+          <div>
+            <strong>Comida +1</strong><br>
+            Costo: 5 basura | +1 punto
+          </div>
+          <button id="buy-1">Comprar</button>
+        </div>
+        <div class="shop-item">
+          <div>
+            <strong>Comida +2</strong><br>
+            Costo: 10 basura | +2 puntos
+          </div>
+          <button id="buy-2">Comprar</button>
+        </div>
+        <div class="shop-item">
+          <div>
+            <strong>Comida +3</strong><br>
+            Costo: 15 basura | +4 puntos
+          </div>
+          <button id="buy-3">Comprar</button>
+        </div>
       </div>
+      <button id="exit-shop">Salir</button>
     </div>
   </div>
 
+  <!-- Modal Pescar -->
   <div id="fish-modal" class="modal">
     <div class="modal-content">
-      <h2>🎣 Hora de Pescar</h2>
-      <p>Elige una ficha para revelar su valor:</p>
-      <div id="fish-tokens"></div>
-      <div class="modal-actions">
-        <button id="confirm-fish" class="btn-cyan" disabled>Aceptar</button>
-        <button id="cancel-fish" class="btn-purple">Cancelar</button>
-      </div>
+      <span class="close-modal" id="close-fish">&times;</span>
+      <h2>Hora de Pescar</h2>
+      <p>Elige una ficha:</p>
+      <div style="display:flex;justify-content:center;flex-wrap:wrap;" id="fish-tokens"></div>
+      <button id="confirm-fish" disabled>Aceptar</button>
     </div>
   </div>
 
+  <!-- Modal Elegir Jugador -->
   <div id="target-modal" class="modal">
     <div class="modal-content">
-      <h2 id="target-title">Elige un rival:</h2>
+      <span class="close-modal" id="close-target">&times;</span>
+      <h2>Elige al rival</h2>
       <div id="target-players"></div>
-      <div class="modal-actions">
-        <button id="cancel-target" class="btn-purple">Cancelar</button>
-      </div>
+      <button id="confirm-target">Aceptar</button>
     </div>
   </div>
-
-  <!-- MESSAGE -->
-  <div id="game-message" class="message"></div>
 
   <script>
     // === ESTADO DEL JUEGO ===
-    const state = {
-      currentScreen: 'menu',
-      players: [
-        { name: 'Tu', isHuman: true, trash: 0, score: 0, tokens: [], cards: [], skippedTurn: false },
-        { name: 'Bot 1', isHuman: false, trash: 0, score: 0, tokens: [], cards: [], skippedTurn: false },
-        { name: 'Bot 2', isHuman: false, trash: 0, score: 0, tokens: [], cards: [], skippedTurn: false },
-        { name: 'Bot 3', isHuman: false, trash: 0, score: 0, tokens: [], cards: [], skippedTurn: false }
-      ],
-      currentPlayerIndex: 0,
-      turnCount: 0,
-      maxTurns: 30,
-      deck: [],
-      tokens: Array(12).fill().map((_, i) => ({
-        id: i,
-        value: i < 4 ? 0.5 : i < 8 ? 1 : 1.5,
-        color: i < 4 ? 'pink' : i < 8 ? 'brown' : 'yellow',
-        revealed: false,
-        owner: null
-      })),
-      newCard: null,
-      turnTimer: null,
-      botTimer: null,
-      reverseTurn: false
-    };
-
-    // === CARTAS ===
-    const cardTypes = [
-      { name: 'Basura +1', type: 'trash', value: 1 },
-      { name: 'Basura +2', type: 'trash', value: 2 },
-      { name: 'Basura +3', type: 'trash', value: 3 },
-      { name: 'Robo-Basura', type: 'steal' },
-      { name: 'Hora de Pescar', type: 'fish' },
-      { name: 'Intercambio de Ajolotes', type: 'swap' },
-      { name: 'Duelo de Perder Turno', type: 'skip' },
-      { name: 'Rotación de Basura', type: 'rotate' },
-      { name: 'Cambio de Rotación de Turnos', type: 'reverse' }
+    const players = [
+      { name: "Tu", isHuman: true, trash: 0, score: 0, tokens: [], cards: [], skipNext: false },
+      { name: "Bot 1", isHuman: false, trash: 0, score: 0, tokens: [], cards: [], skipNext: false },
+      { name: "Bot 2", isHuman: false, trash: 0, score: 0, tokens: [], cards: [], skipNext: false },
+      { name: "Bot 3", isHuman: false, trash: 0, score: 0, tokens: [], cards: [], skipNext: false }
     ];
 
-    function createDeck() {
-      const deck = [];
-      // 6 de cada basura
-      for (let i = 0; i < 6; i++) {
-        deck.push({ ...cardTypes[0] });
-        deck.push({ ...cardTypes[1] });
-        deck.push({ ...cardTypes[2] });
+    let currentPlayer = 0;
+    let turnCount = 0;
+    const maxTurns = 30;
+    let direction = 1; // 1 = normal, -1 = invertido
+    let deck = [];
+    let discarded = [];
+    let availableTokens = Array(12).fill(null); // null = no revelada
+    let currentCard = null;
+    let timer = null;
+    let botTimer = null;
+
+    // Cartas
+    const cardTypes = [
+      { name: "Basura +1", type: "trash", value: 1 },
+      { name: "Basura +2", type: "trash", value: 2 },
+      { name: "Basura +3", type: "trash", value: 3 },
+      { name: "Robo-Basura", type: "steal" },
+      { name: "Hora de Pescar", type: "fish" },
+      { name: "Intercambio de Ajolotes", type: "swap" },
+      { name: "Duelo de Perder Turno", type: "skip" },
+      { name: "Rotación de Basura", type: "rotate" },
+      { name: "Cambio de Rotación de Turnos", type: "reverse" }
+    ];
+
+    // Inicializar mazo
+    function initDeck() {
+      deck = [];
+      for (let i = 0; i < 5; i++) {
+        cardTypes.forEach(card => deck.push({ ...card }));
       }
-      // 3 de cada especial
-      for (let i = 3; i < cardTypes.length; i++) {
-        for (let j = 0; j < 3; j++) {
-          deck.push({ ...cardTypes[i] });
-        }
-      }
-      return shuffle(deck);
+      shuffle(deck);
     }
 
     function shuffle(array) {
@@ -543,567 +542,460 @@
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
       }
-      return array;
     }
 
-    // === TIENDA ===
-    const shopItems = [
-      { name: 'Alguita Limpia', cost: 2, points: 1 },
-      { name: 'Red Salvavidas', cost: 5, points: 2 },
-      { name: 'Tanque de Oxígeno', cost: 10, points: 4 }
-    ];
-
-    // === NAVEGACIÓN ENTRE PANTALLAS ===
-    const screens = {
-      menu: document.getElementById('menu-screen'),
-      tutorial: document.getElementById('tutorial-screen'),
-      credits: document.getElementById('credits-screen'),
-      game: document.getElementById('game-screen'),
-      ranking: document.getElementById('ranking-screen')
-    };
-
-    function showScreen(id) {
-      Object.values(screens).forEach(s => s.classList.remove('active'));
-      screens[id].classList.add('active');
-      state.currentScreen = id;
-    }
-
-    // === EVENTOS DEL MENÚ ===
-    document.getElementById('play-btn').onclick = () => startGame();
-    document.getElementById('tutorial-btn').onclick = () => showScreen('tutorial');
-    document.getElementById('credits-btn').onclick = () => showScreen('credits');
-    document.getElementById('exit-btn-menu').onclick = () => {
-      if (confirm('¿Seguro que quieres salir?')) window.close();
-    };
-    document.getElementById('back-tutorial').onclick = () => showScreen('menu');
-    document.getElementById('back-credits').onclick = () => showScreen('menu');
-    document.getElementById('exit-to-menu').onclick = () => {
-      if (confirm('¿Volver al menú? Se perderá la partida.')) {
-        showScreen('menu');
-        resetGame();
-      }
-    };
-    document.getElementById('back-to-menu').onclick = () => {
-      showScreen('menu');
-      resetGame();
-    };
-
-    // === INICIO DEL JUEGO ===
-    function startGame() {
-      resetGame();
-      state.deck = createDeck();
-      showScreen('game');
-      updatePlayersUI();
-      updateTokensUI();
-      startTurn();
-    }
-
-    function resetGame() {
-      state.currentPlayerIndex = 0;
-      state.turnCount = 0;
-      state.reverseTurn = false;
-      state.players.forEach(p => {
-        p.trash = 0;
-        p.score = 0;
-        p.tokens = [];
-        p.cards = [];
-        p.skippedTurn = false;
+    // Fichas: 4 de cada tipo
+    function initTokens() {
+      const types = ['pink', 'brown', 'yellow'];
+      const values = { pink: 0.5, brown: 1, yellow: 1.5 };
+      availableTokens = [];
+      types.forEach(type => {
+        for (let i = 0; i < 4; i++) {
+          availableTokens.push({ type, value: values[type], revealed: false });
+        }
       });
-      state.tokens.forEach(t => {
-        t.revealed = false;
-        t.owner = null;
-      });
-      state.newCard = null;
-      clearTimeout(state.turnTimer);
-      clearTimeout(state.botTimer);
+      shuffle(availableTokens);
     }
 
     // === UI ===
-    function updatePlayersUI() {
-      const container = document.getElementById('players-info');
-      container.innerHTML = '';
-      state.players.forEach((p, i) => {
-        const box = document.createElement('div');
-        box.className = `player-box ${p.isHuman ? 'human' : ''} ${i === state.currentPlayerIndex ? 'active' : ''}`;
-        if (p.skippedTurn) box.style.opacity = '0.6';
-        box.innerHTML = `
-          <h3>${p.name}</h3>
-          <p>Basura: ${p.trash}</p>
-          <p>Puntaje: ${p.score}</p>
-          <p>Fichas: ${p.tokens.map(t => t === 0.5 ? '0.5' : t).join(', ') || 'ninguna'}</p>
-          <p>Cartas: ${p.cards.length}</p>
-        `;
-        container.appendChild(box);
+    const screens = {
+      menu: document.getElementById("menu-screen"),
+      tutorial: document.getElementById("tutorial-screen"),
+      credits: document.getElementById("credits-screen"),
+      gameplay: document.getElementById("gameplay-screen"),
+      ranking: document.getElementById("ranking-screen")
+    };
+
+    function showScreen(id) {
+      Object.values(screens).forEach(s => s.classList.remove("active"));
+      screens[id].classList.add("active");
+      document.querySelector('.container').classList.add('active');
+    }
+
+    // === EVENTOS MENÚ ===
+    document.getElementById("btn-play").onclick = () => {
+      initGame();
+      showScreen("gameplay");
+      startTurn();
+    };
+
+    document.getElementById("btn-tutorial").onclick = () => showScreen("tutorial");
+    document.getElementById("btn-credits").onclick = () => showScreen("credits");
+    document.getElementById("back-to-menu1").onclick = 
+    document.getElementById("back-to-menu2").onclick = 
+    document.getElementById("back-to-menu3").onclick = () => showScreen("menu");
+
+    document.getElementById("btn-exit").onclick = () => {
+      if (confirm("¿Seguro que quieres salir?")) window.close();
+    };
+
+    document.getElementById("exit-to-menu").onclick = () => {
+      if (confirm("¿Volver al menú? Se perderá la partida.")) {
+        showScreen("menu");
+      }
+    };
+
+    // === INICIO JUEGO ===
+    function initGame() {
+      players.forEach(p => {
+        p.trash = 0; p.score = 0; p.tokens = []; p.cards = []; p.skipNext = false;
       });
+      currentPlayer = 0;
+      turnCount = 0;
+      direction = 1;
+      currentCard = null;
+      initDeck();
+      initTokens();
+      updateUI();
+      renderTokens();
     }
 
-    function updateTurnIndicator() {
-      const player = state.players[state.currentPlayerIndex];
-      document.getElementById('current-player-name').textContent = player.name;
-      document.getElementById('turn-indicator').textContent = `Turno de: ${player.name}`;
-    }
-
-    function updateActionButtons() {
-      const container = document.getElementById('action-buttons');
-      container.innerHTML = '';
-      const player = state.players[state.currentPlayerIndex];
-
-      if (!player.isHuman) return;
-
-      if (player.skippedTurn) {
-        const btn = document.createElement('button');
-        btn.textContent = 'Turno perdido...';
-        btn.disabled = true;
-        btn.className = 'btn-purple';
-        container.appendChild(btn);
-        return;
-      }
-
-      // Botón tienda siempre visible
-      const shopBtn = document.createElement('button');
-      shopBtn.textContent = 'Ir a La Tiendita';
-      shopBtn.className = 'btn-yellow';
-      shopBtn.onclick = openShop;
-      container.appendChild(shopBtn);
-
-      // Si no hay carta nueva
-      if (!state.newCard && !player.cards.some(c => c)) {
-        const drawBtn = document.createElement('button');
-        drawBtn.textContent = 'Recoger Carta Nueva';
-        drawBtn.className = 'btn-cyan';
-        drawBtn.onclick = drawCard;
-        container.appendChild(drawBtn);
-      }
-
-      // Si hay carta nueva
-      if (state.newCard) {
-        const applyBtn = document.createElement('button');
-        applyBtn.textContent = 'Aplicar Carta Nueva';
-        applyBtn.className = 'btn-pink';
-        applyBtn.onclick = () => applyCard(state.newCard, true);
-        container.appendChild(applyBtn);
-
-        const storeBtn = document.createElement('button');
-        storeBtn.textContent = 'Almacenar Carta Nueva';
-        storeBtn.className = 'btn-purple';
-        storeBtn.disabled = player.cards.length >= 5;
-        storeBtn.onclick = storeNewCard;
-        container.appendChild(storeBtn);
-      }
-
-      // Finalizar turno
-      if (state.newCard || player.cards.length > 0) {
-        const endBtn = document.createElement('button');
-        endBtn.textContent = 'Finalizar Turno';
-        endBtn.className = 'btn-pink';
-        endBtn.onclick = endTurn;
-        container.appendChild(endBtn);
-      }
-    }
-
-    function updateStoredCards() {
-      const list = document.getElementById('stored-cards-list');
-      list.innerHTML = '';
-      const player = state.players[state.currentPlayerIndex];
-      if (!player.isHuman) return;
-
-      player.cards.forEach((card, i) => {
-        const tag = document.createElement('div');
-        tag.className = 'card-tag';
-        tag.textContent = card.name;
-        tag.onclick = () => applyStoredCard(i);
-        list.appendChild(tag);
+    function updateUI() {
+      // Info jugadores
+      players.forEach((p, i) => {
+        document.getElementById(`p${i}-trash`).textContent = p.trash;
+        document.getElementById(`p${i}-score`).textContent = p.score;
+        document.getElementById(`p${i}-tokens`).textContent = p.tokens.map(t => t.value).join(", ") || "-";
+        document.getElementById(`p${i}-cards`).textContent = p.cards.length;
+        const box = document.getElementById(`player-${i}`);
+        box.classList.toggle("current-turn", i === currentPlayer);
       });
+
+      // Indicador de turno
+      document.getElementById("turn-indicator").textContent = 
+        `Turno de: ${players[currentPlayer].name} ${players[currentPlayer].skipNext ? "(Salta turno)" : ""}`;
+
+      // Cartas almacenadas
+      const container = document.getElementById("stored-cards-container");
+      container.innerHTML = "";
+      if (players[0].isHuman) {
+        players[0].cards.forEach((card, idx) => {
+          const tag = document.createElement("span");
+          tag.className = "card-tag";
+          tag.textContent = card.name;
+          tag.onclick = () => useStoredCard(idx);
+          container.appendChild(tag);
+        });
+      }
+
+      // Botones
+      const isHuman = players[currentPlayer].isHuman;
+      document.getElementById("btn-draw").style.display = isHuman && !currentCard ? "block" : "none";
+      document.getElementById("btn-apply").style.display = isHuman && currentCard ? "block" : "none";
+      document.getElementById("btn-store").style.display = isHuman && currentCard && players[0].cards.length < 5 ? "block" : "none";
+      document.getElementById("btn-end-turn").style.display = isHuman && currentCard ? "block" : "none";
     }
 
-    function updateTokensUI() {
-      const container = document.getElementById('tokens');
-      container.innerHTML = '';
-      state.tokens.forEach(token => {
-        const div = document.createElement('div');
-        div.className = `token ${token.revealed ? 'revealed ' + token.color : ''} ${token.owner ? 'removed' : ''}`;
-        container.appendChild(div);
+    function renderTokens() {
+      const area = document.getElementById("tokens-area");
+      area.innerHTML = "";
+      players.forEach(p => {
+        p.tokens.forEach(t => {
+          const div = document.createElement("div");
+          div.className = `token revealed ${t.type}`;
+          area.appendChild(div);
+        });
       });
+      for (let i = players.reduce((a,p) => a + p.tokens.length, 0); i < 12; i++) {
+        const div = document.createElement("div");
+        div.className = "token";
+        area.appendChild(div);
+      }
     }
 
     // === TURNO ===
     function startTurn() {
-      const player = state.players[state.currentPlayerIndex];
-      player.skippedTurn = false;
-      updatePlayersUI();
-      updateTurnIndicator();
-      updateStoredCards();
-      updateActionButtons();
+      if (players[currentPlayer].skipNext) {
+        showMessage(`${players[currentPlayer].name} pierde su turno.`);
+        players[currentPlayer].skipNext = false;
+        endTurn();
+        return;
+      }
 
-      if (!player.isHuman) {
-        state.botTimer = setTimeout(botPlay, 5000);
+      updateUI();
+
+      if (!players[currentPlayer].isHuman) {
+        botTimer = setTimeout(botPlay, 5000);
       } else {
-        state.turnTimer = setTimeout(() => {
-          showMessage('¡Perdiste tu turno por inactividad!');
+        startPlayerTimer();
+      }
+    }
+
+    function startPlayerTimer() {
+      let timeLeft = 8;
+      timer = setInterval(() => {
+        timeLeft--;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          showMessage("Tu perdiste tu turno por inactividad");
           endTurn();
-        }, 8000);
-      }
+        }
+      }, 1000);
     }
 
-    function endTurn() {
-      clearTimeout(state.turnTimer);
-      clearTimeout(state.botTimer);
-      state.newCard = null;
-      state.turnCount++;
-
-      if (checkGameEnd()) return;
-
-      // Avanzar turno
-      do {
-        state.currentPlayerIndex = state.reverseTurn
-          ? (state.currentPlayerIndex - 1 + 4) % 4
-          : (state.currentPlayerIndex + 1) % 4;
-      } while (state.players[state.currentPlayerIndex].skippedTurn);
-
-      startTurn();
+    function clearTimers() {
+      if (timer) clearInterval(timer);
+      if (botTimer) clearTimeout(botTimer);
     }
 
-    function checkGameEnd() {
-      const tokensLeft = state.tokens.filter(t => !t.owner).length;
-      if (tokensLeft === 0 || state.turnCount >= state.maxTurns) {
-        endGame();
-        return true;
-      }
-      return false;
-    }
+    // === ACCIONES JUGADOR ===
+    document.getElementById("btn-draw").onclick = () => {
+      clearTimers();
+      drawCard();
+    };
 
-    function endGame() {
-      const sorted = [...state.players].sort((a, b) => b.score - a.score);
-      const list = document.getElementById('ranking-list');
-      list.innerHTML = '';
-      sorted.forEach((p, i) => {
-        const div = document.createElement('div');
-        div.textContent = `${i + 1}. ${p.name} — ${p.score} puntos`;
-        if (i === 0) div.className = 'winner';
-        list.appendChild(div);
-      });
-      showScreen('ranking');
-    }
-
-    // === ACCIONES ===
     function drawCard() {
-      clearTimeout(state.turnTimer);
-      if (state.deck.length === 0) state.deck = createDeck();
-      state.newCard = state.deck.pop();
-      showMessage(`Sacaste: ${state.newCard.name}`);
-      updateActionButtons();
+      if (deck.length === 0) {
+        deck = discarded;
+        discarded = [];
+        shuffle(deck);
+      }
+      currentCard = deck.pop();
+      showMessage(`Sacaste: ${currentCard.name}`);
+      updateUI();
     }
 
-    function storeNewCard() {
-      const player = state.players[state.currentPlayerIndex];
-      if (player.cards.length >= 5) return;
-      player.cards.push(state.newCard);
-      state.newCard = null;
-      updateStoredCards();
-      updateActionButtons();
+    document.getElementById("btn-apply").onclick = () => {
+      clearTimers();
+      applyCard(currentCard);
+      currentCard = null;
+      document.getElementById("btn-end-turn").style.display = "block";
+    };
+
+    document.getElementById("btn-store").onclick = () => {
+      clearTimers();
+      if (players[0].cards.length >= 5) {
+        showMessage("¡Máximo 5 cartas!");
+        return;
+      }
+      players[0].cards.push(currentCard);
+      showMessage(`Almacenaste: ${currentCard.name}`);
+      currentCard = null;
+      updateUI();
+    };
+
+    function useStoredCard(index) {
+      clearTimers();
+      const card = players[0].cards.splice(index, 1)[0];
+      applyCard(card);
+      endTurn();
     }
 
-    function applyStoredCard(index) {
-      const player = state.players[state.currentPlayerIndex];
-      if (!player.isHuman || index >= player.cards.length) return;
-      clearTimeout(state.turnTimer);
-      const card = player.cards.splice(index, 0)[0];
-      applyCard(card, false);
-      updateStoredCards();
+    document.getElementById("btn-end-turn").onclick = () => {
+      clearTimers();
+      endTurn();
+    };
+
+    // === TIENDA ===
+    document.getElementById("btn-shop").onclick = openShop;
+    document.getElementById("close-shop").onclick = 
+    document.getElementById("exit-shop").onclick = () => {
+      document.getElementById("shop-modal").classList.remove("active");
+      if (players[currentPlayer].isHuman) endTurn();
+    };
+
+    function openShop() {
+      if (!players[currentPlayer].isHuman) return;
+      const modal = document.getElementById("shop-modal");
+      modal.classList.add("active");
+
+      const costs = [5, 10, 15];
+      const points = [1, 2, 4];
+      costs.forEach((cost, i) => {
+        const btn = document.getElementById(`buy-${i+1}`);
+        btn.disabled = players[0].trash < cost;
+        btn.onclick = () => buyItem(cost, points[i], i+1);
+      });
     }
 
-    function applyCard(card, isNew) {
-      const player = state.players[state.currentPlayerIndex];
-      if (isNew) state.newCard = null;
+    function buyItem(cost, pts, id) {
+      if (players[0].trash < cost) return;
+      players[0].trash -= cost;
+      players[0].score += pts;
+      showMessage(`¡Compraste Comida +${id}! +${pts} puntos`);
+      updateUI();
+      document.getElementById("shop-modal").classList.remove("active");
+      endTurn();
+    }
 
+    // === APLICAR CARTA ===
+    function applyCard(card) {
       switch (card.type) {
-        case 'trash':
-          player.trash += card.value;
+        case "trash":
+          players[currentPlayer].trash += card.value;
           showMessage(`+${card.value} basura`);
           break;
-        case 'steal':
-          openTargetSelection('Robo-Basura', target => {
+        case "steal":
+          openTargetModal(target => {
             const roll = rollDice();
-            const targetPlayer = state.players[target];
-            const stolen = Math.min(roll, targetPlayer.trash);
-            targetPlayer.trash -= stolen;
-            player.trash += stolen;
+            const stolen = Math.min(roll, players[target].trash);
+            players[target].trash -= stolen;
+            players[currentPlayer].trash += stolen;
             showMessage(`¡Robaste ${stolen} basura!`);
-            updatePlayersUI();
+            updateUI();
           });
           break;
-        case 'fish':
+        case "fish":
           openFishModal();
-          return;
-        case 'swap':
-          openTargetSelection('Intercambio de Ajolotes', target => {
-            const pRoll = rollDice();
-            const tRoll = rollDice();
-            if (pRoll > tRoll && state.players[target].tokens.length > 0) {
-              const idx = Math.floor(Math.random() * state.players[target].tokens.length);
-              const token = state.players[target].tokens.splice(idx, 1)[0];
-              state.players[target].score -= token;
-              player.tokens.push(token);
-              player.score += token;
-              showMessage(`¡Intercambiaste una ficha +${token} puntos!`);
+          break;
+        case "swap":
+          openTargetModal(target => {
+            const myRoll = rollDice();
+            const theirRoll = rollDice();
+            if (myRoll > theirRoll && players[target].tokens.length > 0) {
+              const idx = Math.floor(Math.random() * players[target].tokens.length);
+              const token = players[target].tokens.splice(idx, 1)[0];
+              players[currentPlayer].tokens.push(token);
+              players[currentPlayer].score += token.value;
+              players[target].score -= token.value;
+              showMessage(`¡Intercambiaste una ficha! +${token.value} puntos`);
             } else {
-              showMessage(pRoll > tRoll ? 'El rival no tiene fichas' : '¡Perdiste el duelo!');
+              showMessage(myRoll > theirRoll ? "No tiene fichas" : "¡Perdiste el intercambio!");
             }
-            updatePlayersUI();
+            updateUI();
+            renderTokens();
           });
           break;
-        case 'skip':
-          openTargetSelection('Duelo de Perder Turno', target => {
-            const pRoll = rollDice();
-            const tRoll = rollDice();
-            if (pRoll > tRoll) {
-              state.players[target].skippedTurn = true;
-              showMessage('¡Ganaste el duelo! Rival pierde turno.');
+        case "skip":
+          openTargetModal(target => {
+            const myRoll = rollDice();
+            const theirRoll = rollDice();
+            if (myRoll > theirRoll) {
+              players[target].skipNext = true;
+              showMessage(`¡${players[target].name} pierde su próximo turno!`);
             } else {
-              player.skippedTurn = true;
-              showMessage('¡Perdiste el duelo! Pierdes tu próximo turno.');
+              players[currentPlayer].skipNext = true;
+              showMessage("¡Tú pierdes tu próximo turno!");
             }
           });
           break;
-        case 'rotate':
-          const trashes = state.players.map(p => p.trash);
-          state.players.forEach((p, i) => {
-            p.trash = trashes[state.reverseTurn ? (i + 1) % 4 : (i - 1 + 4) % 4];
+        case "rotate":
+          const trashes = players.map(p => p.trash);
+          players.forEach((p, i) => {
+            const prev = (i - direction + 4) % 4;
+            p.trash = trashes[prev];
           });
-          showMessage('¡Basura rotada entre jugadores!');
-          updatePlayersUI();
+          showMessage("¡Basura rotada!");
           break;
-        case 'reverse':
-          state.reverseTurn = !state.reverseTurn;
-          showMessage(`¡Orden de turnos ${state.reverseTurn ? 'invertido' : 'normalizado'}!`);
-          break;
-      }
-
-      if (isNew || !card.type.includes('modal')) {
-        setTimeout(endTurn, 1500);
-      }
-    }
-
-    // === MODALES ===
-    function openShop() {
-      clearTimeout(state.turnTimer);
-      const modal = document.getElementById('shop-modal');
-      const items = document.getElementById('shop-items');
-      items.innerHTML = '';
-      const player = state.players[0]; // humano
-
-      shopItems.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'shop-item';
-        div.innerHTML = `
-          <div>
-            <strong>${item.name}</strong><br>
-            Costo: ${item.cost} basura | +${item.points} puntos
-          </div>
-          <button class="btn-cyan" ${player.trash < item.cost ? 'disabled' : ''}>
-            Comprar
-          </button>
-        `;
-        div.querySelector('button').onclick = () => {
-          player.trash -= item.cost;
-          player.score += item.points;
-          showMessage(`¡Compraste ${item.name}! +${item.points} puntos`);
-          updatePlayersUI();
-          modal.classList.remove('active');
-          endTurn();
-        };
-        items.appendChild(div);
-      });
-
-      modal.classList.add('active');
-      document.getElementById('close-shop').onclick = () => {
-        modal.classList.remove('active');
-        endTurn();
-      };
-    }
-
-    function openFishModal() {
-      const modal = document.getElementById('fish-modal');
-      const tokensDiv = document.getElementById('fish-tokens');
-      tokensDiv.innerHTML = '';
-      let selected = null;
-
-      state.tokens.filter(t => !t.owner).forEach(token => {
-        const div = document.createElement('div');
-        div.className = 'fish-token';
-        div.innerHTML = '<div class="token" style="margin:0 auto;"></div>';
-        div.onclick = () => {
-          document.querySelectorAll('.fish-token').forEach(d => d.classList.remove('selected'));
-          div.classList.add('selected');
-          selected = token;
-          document.getElementById('confirm-fish').disabled = false;
-        };
-        tokensDiv.appendChild(div);
-      });
-
-      document.getElementById('confirm-fish').onclick = () => {
-        if (!selected) return;
-        selected.revealed = true;
-        selected.owner = state.currentPlayerIndex;
-        const player = state.players[state.currentPlayerIndex];
-        player.tokens.push(selected.value);
-        player.score += selected.value;
-        showMessage(`¡Pescaste una ficha ${selected.color === 'pink' ? 'rosa' : selected.color === 'brown' ? 'café' : 'amarilla'} +${selected.value} puntos!`);
-        updateTokensUI();
-        updatePlayersUI();
-        modal.classList.remove('active');
-        endTurn();
-      };
-
-      document.getElementById('cancel-fish').onclick = () => {
-        modal.classList.remove('active');
-        endTurn();
-      };
-
-      modal.classList.add('active');
-    }
-
-    function openTargetSelection(title, callback) {
-      const modal = document.getElementById('target-modal');
-      document.getElementById('target-title').textContent = title;
-      const playersDiv = document.getElementById('target-players');
-      playersDiv.innerHTML = '';
-
-      state.players.forEach((p, i) => {
-        if (i === state.currentPlayerIndex) return;
-        const btn = document.createElement('button');
-        btn.textContent = p.name;
-        btn.className = 'btn-purple';
-        btn.style.margin = '0.5rem';
-        btn.onclick = () => {
-          modal.classList.remove('active');
-          callback(i);
-          setTimeout(endTurn, 1500);
-        };
-        playersDiv.appendChild(btn);
-      });
-
-      document.getElementById('cancel-target').onclick = () => {
-        modal.classList.remove('active');
-        endTurn();
-      };
-
-      modal.classList.add('active');
-    }
-
-    // === BOT ===
-    function botPlay() {
-      const bot = state.players[state.currentPlayerIndex];
-      const human = state.players[0];
-      const leader = state.players.reduce((a, b) => b.score > a.score ? b : a);
-
-      // Estrategia simple
-      let action = 'draw';
-
-      if (bot.cards.length >= 5) {
-        action = 'apply_old';
-      } else if (bot.trash >= 10 && bot.score < human.score - 3) {
-        action = 'shop';
-      } else if (bot.cards.some(c => c.type === 'fish' || c.type === 'steal') && bot.score < leader.score) {
-        action = 'apply_special';
-      }
-
-      switch (action) {
-        case 'shop':
-          const item = shopItems.find(i => i.cost <= bot.trash && i.points >= 2) || shopItems[0];
-          if (bot.trash >= item.cost) {
-            bot.trash -= item.cost;
-            bot.score += item.points;
-            showMessage(`${bot.name} compró ${item.name}`);
-          } else {
-            action = 'draw';
-          }
-          break;
-        case 'apply_old':
-          const idx = bot.cards.findIndex(c => c.type === 'trash');
-          if (idx !== -1) {
-            const card = bot.cards.splice(idx, 1)[0];
-            bot.trash += card.value;
-          }
-          break;
-        case 'apply_special':
-          const specialIdx = bot.cards.findIndex(c => c.type === 'steal' || c.type === 'fish');
-          if (specialIdx !== -1) {
-            const card = bot.cards.splice(specialIdx, 1)[0];
-            applyCardBot(card);
-            return;
-          }
+        case "reverse":
+          direction *= -1;
+          showMessage("¡Orden de turnos invertido!");
           break;
       }
-
-      if (action === 'draw' || action === 'apply_old') {
-        if (state.deck.length === 0) state.deck = createDeck();
-        const card = state.deck.pop();
-        if (bot.cards.length < 4 && Math.random() > 0.3) {
-          bot.cards.push(card);
-        } else {
-          // aplicar
-          if (card.type === 'trash') {
-            bot.trash += card.value;
-          } else if (card.type === 'fish' && state.tokens.some(t => !t.owner)) {
-            const avail = state.tokens.filter(t => !t.owner);
-            const best = avail.sort((a,b) => b.value - a.value)[0];
-            best.owner = state.currentPlayerIndex;
-            best.revealed = true;
-            bot.tokens.push(best.value);
-            bot.score += best.value;
-            updateTokensUI();
-          }
-        }
-      }
-
-      showMessage(`${bot.name} ha hecho su jugada`);
-      updatePlayersUI();
-      setTimeout(endTurn, 2000);
+      discarded.push(card);
+      updateUI();
+      renderTokens();
     }
 
-    function applyCardBot(card) {
-      const bot = state.players[state.currentPlayerIndex];
-      let target = state.players.indexOf(state.players.reduce((a,b) => b.score > a.score ? b : a));
-      if (target === state.currentPlayerIndex) target = (target + 1) % 4;
-
-      switch (card.type) {
-        case 'steal':
-          const roll = rollDice();
-          const stolen = Math.min(roll, state.players[target].trash);
-          state.players[target].trash -= stolen;
-          bot.trash += stolen;
-          break;
-        case 'fish':
-          const avail = state.tokens.filter(t => !t.owner);
-          if (avail.length > 0) {
-            const best = avail.sort((a,b) => b.value - a.value)[0];
-            best.owner = state.currentPlayerIndex;
-            best.revealed = true;
-            bot.tokens.push(best.value);
-            bot.score += best.value;
-            updateTokensUI();
-          }
-          break;
-      }
-      updatePlayersUI();
-      setTimeout(endTurn, 2000);
-    }
-
-    // === UTILS ===
     function rollDice() {
       return Math.floor(Math.random() * 6) + 1;
     }
 
+    // === MODALES ===
+    function openTargetModal(callback) {
+      const modal = document.getElementById("target-modal");
+      const container = document.getElementById("target-players");
+      container.innerHTML = "";
+      players.forEach((p, i) => {
+        if (i === currentPlayer) return;
+        const btn = document.createElement("button");
+        btn.textContent = p.name;
+        btn.onclick = () => {
+          modal.classList.remove("active");
+          callback(i);
+        };
+        container.appendChild(btn);
+      });
+      document.getElementById("confirm-target").onclick = () => modal.classList.remove("active");
+      modal.classList.add("active");
+    }
+
+    function openFishModal() {
+      const modal = document.getElementById("fish-modal");
+      const container = document.getElementById("fish-tokens");
+      container.innerHTML = "";
+      let selected = null;
+
+      availableTokens.forEach((token, i) => {
+        if (token.revealed) return;
+        const div = document.createElement("div");
+        div.className = "fish-token";
+        div.onclick = () => {
+          document.querySelectorAll(".fish-token").forEach(d => d.classList.remove("selected"));
+          div.classList.add("selected");
+          selected = i;
+          document.getElementById("confirm-fish").disabled = false;
+        };
+        container.appendChild(div);
+      });
+
+      document.getElementById("confirm-fish").onclick = () => {
+        if (selected === null) return;
+        const token = availableTokens[selected];
+        token.revealed = true;
+        players[currentPlayer].tokens.push(token);
+        players[currentPlayer].score += token.value;
+        showMessage(`¡Pescaste una ficha ${token.type === 'pink' ? 'rosa' : token.type === 'brown' ? 'café' : 'amarilla'} +${token.value} puntos!`);
+        modal.classList.remove("active");
+        renderTokens();
+        updateUI();
+      };
+
+      document.getElementById("close-fish").onclick = () => modal.classList.remove("active");
+      modal.classList.add("active");
+    }
+
+    // === BOT ===
+    function botPlay() {
+      const bot = players[currentPlayer];
+      // Estrategia simple
+      if (bot.cards.length >= 5) {
+        const card = bot.cards.shift();
+        applyBotCard(card);
+      } else if (bot.trash >= 15 && getLeader().score > bot.score + 5) {
+        // Comprar en tienda
+        const costs = [5,10,15];
+        const points = [1,2,4];
+        let bought = false;
+        for (let i = costs.length - 1; i >= 0; i--) {
+          if (bot.trash >= costs[i]) {
+            bot.trash -= costs[i];
+            bot.score += points[i];
+            showMessage(`${bot.name} compró en la tiendita`);
+            bought = true;
+            break;
+          }
+        }
+        if (!bought) drawBotCard();
+      } else {
+        drawBotCard();
+      }
+      setTimeout(endTurn, 2000);
+    }
+
+    function drawBotCard() {
+      if (deck.length === 0) {
+        deck = discarded;
+        discarded = [];
+        shuffle(deck);
+      }
+      const card = deck.pop();
+      if (card.type === "trash" || (bot.cards.length < 3 && Math.random() < 0.7)) {
+        bot.cards.push(card);
+      } else {
+        applyBotCard(card);
+      }
+    }
+
+    function applyBotCard(card) {
+      // Implementar lógica de bot para cada carta
+      // Simplificado: aplica si es posible
+      showMessage(`${players[currentPlayer].name} usó ${card.name}`);
+      discarded.push(card);
+    }
+
+    function getLeader() {
+      return players.reduce((a,b) => a.score > b.score ? a : b);
+    }
+
+    // === FIN TURNO ===
+    function endTurn() {
+      clearTimers();
+      currentPlayer = (currentPlayer + direction + 4) % 4;
+      turnCount++;
+      if (turnCount >= maxTurns || availableTokens.every(t => t.revealed)) {
+        endGame();
+      } else {
+        setTimeout(startTurn, 800);
+      }
+    }
+
+    // === FIN JUEGO ===
+    function endGame() {
+      clearTimers();
+      const sorted = [...players].sort((a,b) => b.score - a.score);
+      const list = document.getElementById("ranking-list");
+      list.innerHTML = "";
+      sorted.forEach((p, i) => {
+        const div = document.createElement("div");
+        div.className = "ranking-item";
+        if (i === 0) div.classList.add("winner");
+        div.innerHTML = `<strong>${i+1}. ${p.name}</strong> — ${p.score} puntos`;
+        list.appendChild(div);
+      });
+      showScreen("ranking");
+    }
+
+    // === UTILIDADES ===
     function showMessage(text) {
-      const msg = document.getElementById('game-message');
+      const msg = document.getElementById("message");
       msg.textContent = text;
-      msg.classList.add('show');
-      setTimeout(() => msg.classList.remove('show'), 2500);
+      msg.classList.add("show");
+      setTimeout(() => msg.classList.remove("show"), 3000);
     }
 
     // Inicializar
-    updateTokensUI();
+    document.querySelector('.container').classList.add('active');
   </script>
 </body>
 </html>
