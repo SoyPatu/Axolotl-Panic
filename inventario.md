@@ -42,3 +42,5 @@
 - Creacion del diagrama de flujo sobre AXOLOTL-PANIC en figma y apoyo en la organizacion de los wireframes
 
 - Creación del Prototipo del juego con Perplexity y Replit
+
+- Realizacion y correcion del prototipo funcional preparando el prototipo para los cambios que realizen el equipo agregando las partes vacias de "Historia" y "Acerca de" en Perplexity

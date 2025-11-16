@@ -73,5 +73,7 @@ __Chat con la IA:Gemini__: - [Ver aquí](https://g.co/gemini/share/d1aa2147f178)
 
 __Prototipo por:Gemini__: - [Ver aquí](https://soypatu.github.io/Axolotl-Panic/axolotl_gemini.html)
 
+__Chat con la IA: PerplexityV2 Definitivo__: - [Ver aquí](https://www.perplexity.ai/searchnecesito-que-a-este-juego-anad-YRSINkEpRrSP4NyxkKvoyQ#3)
+
 __Index HTML__: [Ver aquí](https://rogelioamerike.github.io/Axolotl-Panic-Rogelio/index.html)
 
