@@ -73,4 +73,5 @@ __Chat con la IA:Gemini__: - [Ver aquí](https://g.co/gemini/share/d1aa2147f178)
 
 __Prototipo por:Gemini__: - [Ver aquí](https://soypatu.github.io/Axolotl-Panic/axolotl_gemini.html)
 
-__Index HTML__: [Ver aquí](https://soypatu.github.io/Axolotl-Panic/index.html)
+__Index HTML__: [Ver aquí](https://rogelioamerike.github.io/Axolotl-Panic-Rogelio/index.html)
+
