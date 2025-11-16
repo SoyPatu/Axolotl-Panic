@@ -742,6 +742,8 @@ body {
                 <button class="btn btn--primary btn--lg" onclick="startGame()">JUGAR</button>
                 <button class="btn btn--primary btn--lg" onclick="showScreen('tutorial')">TUTORIAL</button>
                 <button class="btn btn--primary btn--lg" onclick="showScreen('creditos')">CRÉDITOS</button>
+                <button class="btn btn--primary btn--lg" onclick="showScreen('historia')">HISTORIA</button>
+                <button class="btn btn--primary btn--lg" onclick="showScreen('acerca-de')">ACERCA DE</button>
                 <button class="btn btn--primary btn--lg" onclick="confirmExit()">SALIR</button>
             </div>
         </div>
@@ -819,6 +821,25 @@ body {
             </div>
         </div>
     </div>
+
+    <!-- PANTALLA DE HISTORIA -->
+<div id="historia" class="screen">
+  <button class="btn btn--secondary back-button" onclick="showScreen('menu-principal')">REGRESAR</button>
+  <div class="content-container">
+    <h2>HISTORIA</h2>
+    <p>aqui va el texto</p>
+  </div>
+</div>
+
+<!-- PANTALLA ACERCA DE -->
+<div id="acerca-de" class="screen">
+  <button class="btn btn--secondary back-button" onclick="showScreen('menu-principal')">REGRESAR</button>
+  <div class="content-container">
+    <h2>ACERCA DE</h2>
+    <p>aqui va el texto</p>
+  </div>
+</div>
+
 
     <!-- PANTALLA DE GAMEPLAY -->
     <div id="gameplay" class="screen">
