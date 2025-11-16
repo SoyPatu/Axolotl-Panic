@@ -53,29 +53,24 @@ __Diagrama de Flujo y Prototipo__: - [Ver aquí](https://www.figma.com/design/6n
 
 __Presentación Axolotl Panic!: Deluxe Edition__: - [Ver aquí](https://www.canva.com/design/DAG3l6bJsqs/HXOmrypzdJK5lryfbxQPRw/edit?utm_content=DAG3l6bJsqs&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
+__Chat con la IA: ChatGPT__: - [Ver aquí](https://chatgpt.com/g/g-p-690258bc41608191bfb721bd4aefbb53-axolotl-panic/project)
 
+__Prototipo por: ChatGPT__: - [Ver aquí](https://soypatu.github.io/Axolotl-Panic/axolotl_chatgpt.html)
 
+__Chat con la IA: Grok__: - [Ver aquí](https://grok.com/share/c2hhcmQtNQ%3D%3D_39f65832-5697-4a2b-ade9-23e7a249fa72)
 
+__Prototipo por: Grok__: - [Ver aquí](https://soypatu.github.io/Axolotl-Panic/axolotl_grok.html)
 
+__Chat con la IA: Perplexity__: - [Ver aquí](https://www.perplexity.ai/search/necesito-que-cumplas-con-las-i-LIo9OaXSTeOE2n9pW.QUOw#8)
 
+__Prototipo por: Perplexity__: - [Ver aquí](https://soypatu.github.io/Axolotl-Panic/axolotl_perplexity.html)
 
+__Chat con la IA:Replit__: - [Ver aquí](https://replit.com/join/ljkeyllays-cdmx3073)
 
+__Prototipo por:Replit__: - [Ver aquí](https://soypatu.github.io/Axolotl-Panic/axolotl_replit.html)
 
+__Chat con la IA:Gemini__: - [Ver aquí](https://g.co/gemini/share/d1aa2147f178)
 
+__Prototipo por:Gemini__: - [Ver aquí](https://soypatu.github.io/Axolotl-Panic/axolotl_gemini.html)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-__Index HTML__: [Ver aquí](https://RogelioAmerike.github.io/Axolotl-Panic-Rogelio/docs/index.html)
+__Index HTML__: [Ver aquí](https://soypatu.github.io/Axolotl-Panic/docs/index.html)
