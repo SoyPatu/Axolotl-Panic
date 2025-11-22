@@ -1446,3 +1446,15 @@ body {
     grid-template-columns: 1fr;
   }
 }
+.galeria-img {
+    display: block;
+    margin: 20px auto 0 auto;
+    max-width: 260px; 
+    max-height: 260px;
+    width: 100%;
+    height: auto;
+    border: 2px solid #ccc;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    background: #fff;
+}
