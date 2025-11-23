@@ -1446,15 +1446,27 @@ body {
     grid-template-columns: 1fr;
   }
 }
+.galeria-section {
+    text-align: center;
+    margin-bottom: 36px; /* más espacio entre bloques */
+}
+
 .galeria-img {
     display: block;
-    margin: 20px auto 0 auto;
-    max-width: 260px; 
-    max-height: 260px;
-    width: 100%;
-    height: auto;
+    margin: 16px auto 0 auto;
+    width: 10px !important;
+    height: 10px !important;
+    object-fit: cover !important;
     border: 2px solid #ccc;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     background: #fff;
+    transition: transform 0.2s;
 }
+.galeria-img:hover {
+    transform: scale(1.08); /* pequeño efecto al pasar el mouse */
+}
+
+
+
+
