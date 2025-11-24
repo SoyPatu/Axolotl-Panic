@@ -744,6 +744,7 @@ body {
                 <button class="btn btn--primary btn--lg" onclick="showScreen('creditos')">CRÉDITOS</button>
                 <button class="btn btn--primary btn--lg" onclick="showScreen('historia')">HISTORIA</button>
                 <button class="btn btn--primary btn--lg" onclick="showScreen('acerca-de')">ACERCA DE</button>
+                <button class="btn btn--primary btn--lg" onclick="showScreen('galeria')">GALERIA</button>
                 <button class="btn btn--primary btn--lg" onclick="confirmExit()">SALIR</button>
             </div>
         </div>
@@ -839,10 +840,28 @@ body {
   </div>
 </div>
 
+<!-- PANTALLA DE GALERIA -->
+<div id="galeria" class="screen">
+  <button class="btn btn--secondary back-button" onclick="showScreen('menu-principal')">REGRESAR</button>
+  <div class="content-container">
+    <h2 style="text-align: center;">GALERIA</h2>
+    <div style="display: flex; flex-direction: column; align-items: center;">
+      <div class="galeria-section">
+        <h3>Juego de Mesa</h3>
+        <img src="JUEGODEMESA.png" class="galeria-img" alt="Juego de Mesa" style="width:600px;height:600px;object-fit:cover;">
+      </div>
+      <div class="galeria-section">
+        <h3>Juego Virtual</h3>
+        <img src="JuegoVirtual.png" class="galeria-img" alt="Juego Virtual" style="width:600px;height:400px;">
+      </div>
+    </div>
+  </div>
+</div>
+
 
     <!-- PANTALLA DE GAMEPLAY -->
     <div id="gameplay" class="screen">
-        <div class="game-header">
+        <div class="game-header">6
             <h2>AXOLOTL PANIC</h2>
             <div class="turn-indicator">Turno de: <span id="current-turn-player"></span></div>
             <div class="turn-timer" id="turn-timer" style="display: none;">Tiempo: <span id="timer-seconds">8</span>s</div>
