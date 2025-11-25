@@ -17,6 +17,8 @@
 
 - Responsable de agregar el apartado de Historia dentro de la página web.
 
+- .
+
 ### Celeste Elisheba Bautista Altamirano
 
 #### Roll:
