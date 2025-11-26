@@ -15,6 +15,9 @@
 
 - Creación del Prototipo del juego con ChatGPT y Grok
 
+- Responsable de agregar la historia en la página web
+
+
 ### Celeste Elisheba Bautista Altamirano
 
 #### Roll:
