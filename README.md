@@ -3,7 +3,8 @@
  - Celeste Bautista Altamirano
  - Rogelio Angel Hugo Sanchez Camacho
 
- ## __Juego Completo__: - __AQUI__: [Ver aquí](https://SoyPatu.github.io/Axolotl-Panic/index.html)
+
+__Juego Completo__: - [Ver aquí](https://soypatu.github.io/Axolotl-Panic/index.html)
 
 
 ### Axolotl Panic!(Versión Fisica)
