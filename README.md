@@ -4,7 +4,7 @@
  - Rogelio Angel Hugo Sanchez Camacho
 
 
-__Juego Completo__: - [Ver aquí](https://soypatu.github.io/Axolotl-Panic/index.html)
+## __Juego Completo__: - [Ver aquí](https://soypatu.github.io/Axolotl-Panic/index.html)
 
 
 ### Axolotl Panic!(Versión Fisica)
@@ -42,7 +42,6 @@ __Elementos__:
 - Barajear las cartas
 - Implemetar la dinámica de "La Tiendita"
 
-![Axolotl Panic!:](./assets/MUESTRA1.jpeg)
 
 ![Axolotl Panic!:](./assets/MUESTRA2.jpeg)
 
@@ -54,6 +53,8 @@ __Diagrama de Flujo y Prototipo__: - [Ver aquí](https://www.figma.com/design/6n
 
 __Presentación Axolotl Panic!: Deluxe Edition__: - [Ver aquí](https://www.canva.com/design/DAG3l6bJsqs/HXOmrypzdJK5lryfbxQPRw/edit?utm_content=DAG3l6bJsqs&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
+
+### Chats con las IA 
 __Chat con la IA: ChatGPT__: - [Ver aquí](https://chatgpt.com/g/g-p-690258bc41608191bfb721bd4aefbb53-axolotl-panic/project)
 
 __Prototipo por: ChatGPT__: - [Ver aquí](https://soypatu.github.io/Axolotl-Panic/axolotl_chatgpt.html)
