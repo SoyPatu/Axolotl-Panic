@@ -3,7 +3,7 @@
  - Celeste Bautista Altamirano
  - Rogelio Angel Hugo Sanchez Camacho
 
- ## __Juego Completo__: - __AQUI__: [Ver aquí](https://RogelioAMERIKE.github.io/Axolotl-Panic-Rogelio/index.html)
+ ## __Juego Completo__: - __AQUI__: [Ver aquí](https://elichaosx.github.io/Axolotl-Panic-Celeste/index.html)
 
 
 __Chat con la IA: PerplexityV2 Definitivo__: - [Ver aquí](https://www.perplexity.ai/search/necesito-que-a-este-juego-anad-YRSINkEpRrSP4NyxkKvoyQ#3)
