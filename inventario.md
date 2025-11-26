@@ -15,21 +15,22 @@
 
 - Creación del Prototipo del juego con ChatGPT y Grok
 
-- Responsable de agregar la historia en la página web
+- Responsable de agregar la __historia__ en la página web
 
 ### Celeste Elisheba Bautista Altamirano
 
 #### Roll:
--Elaborar los diseños de Figma
--Programadora principal
--Implementar las mecánicas digitales
+- Elaborar los diseños de Figma
+- Programadora principal
+- Implementar las mecánicas digitales
 
 ![Mi foto:](./assets/Foto_Celeste.jpg)
 
--Figma: Apoyo con la elaboración del figma, diseño de la interfaz de juego.
--Inventario: Reconocer las problematicas de implementae nuestro juego físico a digital e integración de la información de inventario.
--Creación de la presentación de Canva
--Responsale de crear la pantalla "Acerca de" dentro de la página web.
+- Figma: Apoyo con la elaboración del figma, diseño de la interfaz de juego.
+- Inventario: Reconocer las problematicas de implementae nuestro juego físico a digital e integración de la información de inventario.
+- Creación de la presentación de Canva
+- Responsale de crear la pantalla __Acerca de__ dentro de la página web.
+
 
 ### Rogelio Angel Hugo Sanchez Camacho 
 
@@ -46,4 +47,4 @@
 
 - Creación del Prototipo del juego con Perplexity y Replit
 
-- Realizacion y correcion del prototipo funcional preparando el prototipo para los cambios que realizen el equipo agregando las partes vacias de "Historia" y "Acerca de" en Perplexity
+- Realizacion y correcion del prototipo funcional preparando el prototipo para los cambios que realizen el equipo agregando las partes vacias de __Historia__ y __Acerca de__ en Perplexity
