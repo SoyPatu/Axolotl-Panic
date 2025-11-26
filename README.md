@@ -3,10 +3,7 @@
  - Celeste Bautista Altamirano
  - Rogelio Angel Hugo Sanchez Camacho
 
- ## __Juego Completo__: - __AQUI__: [Ver aquí](https://soypatu.github.io/Axolotl-Panic/index.html)
-
-__Chat con la IA: PerplexityV2 Definitivo__: - [Ver aquí](https://www.perplexity.ai/search/necesito-que-a-este-juego-anad-YRSINkEpRrSP4NyxkKvoyQ#3)
-
+ ## __Juego Completo__: - __AQUI__: [Ver aquí](https://SoyPatu.github.io/Axolotl-Panic/index.html)
 
 
 ### Axolotl Panic!(Versión Fisica)
