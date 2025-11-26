@@ -31,6 +31,7 @@
 -Figma: Apoyo con la elaboración del figma, diseño de la interfaz de juego.
 -Inventario: Reconocer las problematicas de implementae nuestro juego físico a digital e integración de la información de inventario.
 -Creación de la presentación de Canva
+-Responsale de crear la pantalla "Acerca de" dentro de la página web.
 
 ### Rogelio Angel Hugo Sanchez Camacho 
 
